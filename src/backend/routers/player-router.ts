@@ -7,7 +7,7 @@ import { isNullOrWhiteSpace } from "../utils/util";
 export const playerRouter = express.Router();
 
 // Get all players
-playerRouter.get("/Players", (_req, res) => {
+playerRouter.get("/players", (_req, res) => {
     const unit = new Unit(true);
     const service = new PlayerService(unit);
 
@@ -22,7 +22,7 @@ playerRouter.get("/Players", (_req, res) => {
 });
 
 // Get player by ID
-playerRouter.get("/Players/:id", (req, res) => {
+playerRouter.get("/players/:id", (req, res) => {
     const unit = new Unit(true);
     const service = new PlayerService(unit);
     const id = req.params.id;
