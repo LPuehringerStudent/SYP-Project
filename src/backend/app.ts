@@ -1,10 +1,7 @@
 import express from "express";
 import path from "path";
-import { Unit, ensureSampleDataInserted, resetDatabase } from "./utils/unit";
+import { Unit, ensureSampleDataInserted } from "./utils/unit";
 import { playerRouter } from "./routers/player-router";
-
-// Set to true to reset database on next startup
-const RESET_DB = process.env.RESET_DB === "true";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,53 +32,34 @@ app.get("/api/db-test", (_req, res) => {
         res.json({ status: "connected", tables: result?.count ?? 0 });
     } catch (error) {
         if (unit) {
-            try {
-                unit.complete();
-            } catch {
-                // Ignore close error
-            }
+            try { unit.complete(); } catch { /* ignore */ }
         }
         res.status(500).json({ status: "error", message: String(error) });
     }
 });
 
-// Initialize database and sample data before starting server
-function initializeDatabase(): boolean {
+// Start server first, then initialize DB
+app.listen(PORT, () => {
+    console.log(`🚀 EmberExchange server running on http://localhost:${PORT}`);
+    initDb();
+});
+
+function initDb(): void {
     let unit: Unit | null = null;
     try {
         unit = new Unit(false);
-        
-        // Reset database if requested
-        if (RESET_DB) {
-            console.log("🔄 Resetting database...");
-            resetDatabase(unit.getConnection());
-            console.log("✅ Database reset complete");
-        }
-        
         const result = ensureSampleDataInserted(unit);
-        unit.complete(true);
-        console.log(`📊 Sample data: ${result}`);
-        return true;
-    } catch (error) {
-        console.error("❌ Failed to initialize database:", error);
-        if (unit) {
-            try {
-                unit.complete(false);
-            } catch {
-                // Ignore rollback error
-            }
+        if (result === "inserted") {
+            console.log("📊 Sample data inserted");
+            unit.complete(true);
+        } else {
+            console.log("📊 Sample data skipped (already exists)");
+            unit.complete(false);
         }
-        return false;
+    } catch (error) {
+        console.error("❌ Database initialization failed:", error);
+        if (unit) {
+            try { unit.complete(false); } catch { /* ignore */ }
+        }
     }
-}
-
-// Start server only if database initialization succeeds
-if (initializeDatabase()) {
-    app.listen(PORT, () => {
-        console.log(`🚀 EmberExchange server running on http://localhost:${PORT}`);
-        console.log(`📁 Database: ${path.join(process.cwd(), "src", "backend", "db", "EmberExchange.db")}`);
-    });
-} else {
-    console.error("❌ Server failed to start due to database initialization error");
-    process.exit(1);
 }
