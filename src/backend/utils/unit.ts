@@ -69,7 +69,25 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
         return result > 0;
     }
 
-    function insert(): void {
+    function insertLootboxType(): void {
+        const stmt = unit.prepare<
+            unknown,
+            { name: string; description: string; costCoins: number; costFree: number; isAvailable: number }
+        >(
+            `insert into LootboxType (name, description, costCoins, costFree, isAvailable) 
+             values (@name, @description, @costCoins, @costFree, @isAvailable)`,
+            {
+                name: "Standard Lootbox",
+                description: "A standard lootbox with common to legendary items",
+                costCoins: 0,
+                costFree: 1,
+                isAvailable: 1
+            }
+        );
+        stmt.run();
+    }
+
+    function insertPlayer(): void {
         const stmt = unit.prepare<
             unknown,
             { username: string; coins: number; lootboxCount: number; isAdmin: number; joinedAt: string }
@@ -88,7 +106,8 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
     }
 
     if (!(alreadyPresent())) {
-        insert();
+        insertLootboxType();
+        insertPlayer();
         return "inserted";
     }
     return "skipped";
@@ -162,11 +181,24 @@ class DB {
         `);
 
         connection.exec(`
+            create table if not exists LootboxType (
+                lootboxTypeId integer primary key autoincrement,
+                name text not null,
+                description text,
+                costCoins integer not null default 0,
+                costFree integer not null default 1,
+                dailyLimit integer,
+                isAvailable integer not null default 1
+            ) strict
+        `);
+
+        connection.exec(`
             create table if not exists Lootbox (
                 lootboxId integer primary key autoincrement,
+                lootboxTypeId integer not null references LootboxType(lootboxTypeId),
                 playerId integer not null references Player(playerId),
                 openedAt text not null,
-                costFree integer not null default 1
+                acquiredHow text not null check (acquiredHow in ('free', 'purchase', 'reward'))
             ) strict
         `);
 
@@ -252,6 +284,7 @@ class DB {
         connection.exec(`create index if not exists idx_chat_sender on ChatMessage(senderId)`);
         connection.exec(`create index if not exists idx_chat_receiver on ChatMessage(receiverId)`);
         connection.exec(`create index if not exists idx_lootbox_player on Lootbox(playerId)`);
+        connection.exec(`create index if not exists idx_lootbox_type on Lootbox(lootboxTypeId)`);
         connection.exec(`create index if not exists idx_minigame_player on MiniGameSession(playerId)`);
     }
 }

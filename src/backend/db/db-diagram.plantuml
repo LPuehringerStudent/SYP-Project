@@ -17,14 +17,26 @@ table(Player) {
     username: TEXT
     coins: INTEGER
     lootboxCount: INTEGER
+    isAdmin: BOOLEAN
     joinedAt: TIMESTAMP
+}
+
+table(LootboxType) {
+    primary_key(lootboxTypeId): INTEGER
+    name: TEXT
+    description: TEXT
+    costCoins: INTEGER
+    costFree: BOOLEAN
+    dailyLimit: INTEGER «NULL for unlimited»
+    isAvailable: BOOLEAN
 }
 
 table(Lootbox) {
     primary_key(lootboxId): INTEGER
+    foreign_key(lootboxTypeId): INTEGER
     foreign_key(playerId): INTEGER
     openedAt: TIMESTAMP
-    costFree: BOOLEAN
+    acquiredHow: TEXT «free|purchase|reward»
 }
 
 table(LootboxDrop) {
@@ -105,6 +117,8 @@ Player "1" -- "0..*" MiniGameSession : plays
 Player "1" -- "0..*" Ownership : has history
 Player "1" -- "0..*" ChatMessage : sends
 Player "1" -- "0..*" ChatMessage : receives
+
+LootboxType "1" -- "0..*" Lootbox : defines
 
 Lootbox "1" -- "1" LootboxDrop : contains
 LootboxDrop "1" -- "1" Stove : drops

@@ -34,11 +34,26 @@ export interface StoveRow extends Stove {
     stoveId: number;
 }
 
+// LootboxType
+export interface LootboxType {
+    name: string;
+    description: string | null;
+    costCoins: number;
+    costFree: boolean;
+    dailyLimit: number | null;
+    isAvailable: boolean;
+}
+
+export interface LootboxTypeRow extends LootboxType {
+    lootboxTypeId: number;
+}
+
 // Lootbox
 export interface Lootbox {
+    lootboxTypeId: number;
     playerId: number;
     openedAt: Date;
-    costFree: boolean;
+    acquiredHow: "free" | "purchase" | "reward";
 }
 
 export interface LootboxRow extends Lootbox {
