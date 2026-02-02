@@ -1,0 +1,23 @@
+{
+  "name": "emberexchange",
+  "version": "1.0.0",
+  "description": "Ember Exchange Application",
+  "main": "dist/backend/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/backend/app.js",
+    "dev": "nodemon --exec ts-node src/backend/app.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.0.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.6",
+    "http-status-codes": "^2.3.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.0"
+  }
+}
