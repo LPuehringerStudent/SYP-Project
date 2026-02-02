@@ -1,11 +1,10 @@
-### EmberExchange API Tests
-
 ### Health Check
 GET http://localhost:3000/api/health
 
 ### Database Connection Test
 GET http://localhost:3000/api/db-test
 
+//Player Endpoints
 ### Get All Players
 GET http://localhost:3000/api/players
 
@@ -74,3 +73,4 @@ DELETE http://localhost:3000/api/players/2
 
 ### Delete Player (not found)
 DELETE http://localhost:3000/api/players/99999
+
