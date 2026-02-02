@@ -4,7 +4,7 @@ import { Database, Statement } from "better-sqlite3";
 import path from "path";
 import fs from "fs";
 
-const dbDir = path.join(process.cwd(), "db");
+const dbDir = path.join(process.cwd(), "src", "backend", "db");
 const dbFileName = path.join(dbDir, "EmberExchange.db");
 
 // Ensure the db directory exists

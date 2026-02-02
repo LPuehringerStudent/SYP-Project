@@ -39,5 +39,5 @@ console.log(`📊 Sample data: ${result}`);
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 EmberExchange server running on http://localhost:${PORT}`);
-    console.log(`📁 Database: ${path.join(process.cwd(), "db", "EmberExchange.db")}`);
+    console.log(`📁 Database: ${path.join(process.cwd(), "src", "backend", "db", "EmberExchange.db")}`);
 });
