@@ -24,6 +24,10 @@ export class Unit {
             DB.beginTransaction(this.db);
         }
     }
+    
+    public getConnection(): Database {
+        return this.db;
+    }
 
     public prepare<TResult, TParams extends Record<string, unknown> = Record<string, unknown>>(
         sql: string,
@@ -60,13 +64,40 @@ export class Unit {
     }
 }
 
+export function resetDatabase(connection: Database): void {
+    // Drop all tables in correct order (respecting foreign keys)
+    connection.exec("DROP TABLE IF EXISTS ChatMessage");
+    connection.exec("DROP TABLE IF EXISTS Ownership");
+    connection.exec("DROP TABLE IF EXISTS PriceHistory");
+    connection.exec("DROP TABLE IF EXISTS MiniGameSession");
+    connection.exec("DROP TABLE IF EXISTS Trade");
+    connection.exec("DROP TABLE IF EXISTS Listing");
+    connection.exec("DROP TABLE IF EXISTS LootboxDrop");
+    connection.exec("DROP TABLE IF EXISTS Lootbox");
+    connection.exec("DROP TABLE IF EXISTS LootboxType");
+    connection.exec("DROP TABLE IF EXISTS Stove");
+    connection.exec("DROP TABLE IF EXISTS StoveType");
+    connection.exec("DROP TABLE IF EXISTS Player");
+    console.log("🗑️  All tables dropped");
+    
+    // Recreate tables
+    DB.ensureTablesCreated(connection);
+    console.log("✅ Tables recreated");
+}
+
 export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
     function alreadyPresent(): boolean {
-        const checkStmt = unit.prepare<{ cnt: number }>(
-            'select count(*) as "cnt" from Player where isAdmin = 1'
-        );
-        const result = checkStmt.get()?.cnt ?? 0;
-        return result > 0;
+        // Check if admin player exists (indicates setup is complete)
+        try {
+            const checkStmt = unit.prepare<{ cnt: number }>(
+                'select count(*) as "cnt" from Player where isAdmin = 1'
+            );
+            const result = checkStmt.get()?.cnt ?? 0;
+            return result > 0;
+        } catch {
+            // Table doesn't exist yet
+            return false;
+        }
     }
 
     function insertLootboxType(): void {
@@ -85,6 +116,7 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
             }
         );
         stmt.run();
+        console.log("✅ Default LootboxType inserted");
     }
 
     function insertPlayer(): void {
@@ -103,6 +135,7 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
             }
         );
         stmt.run();
+        console.log("✅ Admin player inserted");
     }
 
     if (!(alreadyPresent())) {
@@ -149,7 +182,7 @@ class DB {
         console.log(`SQL: ${statement}`);
     }
 
-    private static ensureTablesCreated(connection: Database): void {
+    public static ensureTablesCreated(connection: Database): void {
         connection.exec(`
             create table if not exists Player (
                 playerId integer primary key autoincrement,

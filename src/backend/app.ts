@@ -1,7 +1,10 @@
 import express from "express";
 import path from "path";
-import { Unit, ensureSampleDataInserted } from "./utils/unit";
+import { Unit, ensureSampleDataInserted, resetDatabase } from "./utils/unit";
 import { playerRouter } from "./routers/player-router";
+
+// Set to true to reset database on next startup
+const RESET_DB = process.env.RESET_DB === "true";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +50,14 @@ function initializeDatabase(): boolean {
     let unit: Unit | null = null;
     try {
         unit = new Unit(false);
+        
+        // Reset database if requested
+        if (RESET_DB) {
+            console.log("🔄 Resetting database...");
+            resetDatabase(unit.getConnection());
+            console.log("✅ Database reset complete");
+        }
+        
         const result = ensureSampleDataInserted(unit);
         unit.complete(true);
         console.log(`📊 Sample data: ${result}`);
