@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { Unit, ensureSampleDataInserted } from "./utils/unit";
+import { playerRouter } from "./routers/player-router";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Static files (frontend)
 app.use(express.static(path.join(process.cwd(), "src/frontend")));
+
+// API Routes
+app.use(playerRouter);
 
 // Health check endpoint
 app.get("/api/health", (_req, res) => {

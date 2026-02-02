@@ -1,0 +1,22 @@
+### EmberExchange API Tests
+
+### Health Check
+GET http://localhost:3000/api/health
+
+### Database Connection Test
+GET http://localhost:3000/api/db-test
+
+### Get All Players
+GET http://localhost:3000/Players
+
+### Get Player by ID (admin - ID 1)
+GET http://localhost:3000/Players/1
+
+### Get Player by ID (not found)
+GET http://localhost:3000/Players/99999
+
+### Get Player by ID (invalid ID - string)
+GET http://localhost:3000/Players/invalid
+
+### Get Player by ID (invalid ID - negative)
+GET http://localhost:3000/Players/-1
