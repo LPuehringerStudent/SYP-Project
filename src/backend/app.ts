@@ -3,7 +3,7 @@ import path from "path";
 import { Unit, ensureSampleDataInserted } from "./utils/unit";
 import { playerRouter } from "./routers/player-router";
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -39,10 +39,12 @@ app.get("/api/db-test", (_req, res) => {
 });
 
 // Start server first, then initialize DB
-app.listen(PORT, () => {
-    console.log(`🚀 EmberExchange server running on http://localhost:${PORT}`);
-    initDb();
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`🚀 EmberExchange server running on http://localhost:${PORT}`);
+        initDb();
+    });
+}
 
 function initDb(): void {
     let unit: Unit | null = null;
