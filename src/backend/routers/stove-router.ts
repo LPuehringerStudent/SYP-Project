@@ -6,6 +6,12 @@ import { isNullOrWhiteSpace } from "../utils/util";
 
 export const stoveRouter = express.Router();
 
+function isConstraintError(err: unknown): boolean {
+    const msg = String(err);
+    return msg.includes("FOREIGN KEY constraint failed") || 
+           msg.includes("UNIQUE constraint failed");
+}
+
 /**
  * @openapi
  * /stoves:
@@ -458,7 +464,11 @@ stoveRouter.delete("/stoves/:id", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Stove not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
