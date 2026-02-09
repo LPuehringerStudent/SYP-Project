@@ -18,7 +18,7 @@
 | Version | Status | Expected Date |
 |:-------:|:------:|:-------------:|
 | `0.0.0` |  Current | — |
-| `0.1.0` |  In Progress | **13.02.2026** *(latest)* |
+| `0.1.0` |  In Progress | **27.02.2026** *(latest)* |
 
 ---
 
@@ -26,6 +26,11 @@
 
 &gt; **Active Branch:** `develop`  
 &gt; All current development work is happening here.
+
+---
+##  Next Release
+
+&gt; v0.1.0 will feature all issues from our Sprint Baclog for sprint 1!
 
 ---
 
