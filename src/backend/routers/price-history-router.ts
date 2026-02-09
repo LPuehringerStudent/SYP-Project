@@ -199,13 +199,9 @@ priceHistoryRouter.get("/stove-types/:typeId/price-history", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 historyId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Sale recorded successfully"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Sale recorded successfully"
  *       400:
  *         description: Missing or invalid fields
  *         content:
@@ -273,20 +269,7 @@ priceHistoryRouter.post("/price-history", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 average:
- *                   type: number
- *                   example: 3500.50
- *                 min:
- *                   type: integer
- *                   example: 1000
- *                 max:
- *                   type: integer
- *                   example: 10000
- *                 count:
- *                   type: integer
- *                   example: 25
+ *               $ref: '#/components/schemas/PriceStats'
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -410,11 +393,9 @@ priceHistoryRouter.get("/stove-types/:typeId/recent-prices", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Price history record deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Price history record deleted"
  *       400:
  *         description: Invalid ID format
  *         content:

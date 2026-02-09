@@ -7,6 +7,12 @@ import { Rarity } from "../../shared/model";
 
 export const stoveTypeRouter = express.Router();
 
+function isConstraintError(err: unknown): boolean {
+    const msg = String(err);
+    return msg.includes("FOREIGN KEY constraint failed") || 
+           msg.includes("UNIQUE constraint failed");
+}
+
 /**
  * @openapi
  * /stove-types:
@@ -213,13 +219,9 @@ stoveTypeRouter.get("/stove-types/rarity/:rarity", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 typeId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Stove type created successfully"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Stove type created successfully"
  *       400:
  *         description: Missing or invalid fields
  *         content:
@@ -320,11 +322,9 @@ stoveTypeRouter.post("/stove-types", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Lootbox weight updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox weight updated"
  *       400:
  *         description: Invalid ID or weight value
  *         content:
@@ -410,11 +410,9 @@ stoveTypeRouter.patch("/stove-types/:id/weight", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Image URL updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Image URL updated"
  *       400:
  *         description: Invalid ID or URL
  *         content:
@@ -487,11 +485,9 @@ stoveTypeRouter.patch("/stove-types/:id/image", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Stove type deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Stove type deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -500,6 +496,12 @@ stoveTypeRouter.patch("/stove-types/:id/image", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Stove type not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Cannot delete stove type with existing stoves or references
  *         content:
  *           application/json:
  *             schema:
@@ -531,7 +533,11 @@ stoveTypeRouter.delete("/stove-types/:id", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Stove type not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
@@ -551,11 +557,7 @@ stoveTypeRouter.delete("/stove-types/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 totalWeight:
- *                   type: integer
- *                   example: 1000
+ *               $ref: '#/components/schemas/TotalWeightResponse'
  *       500:
  *         description: Server error
  *         content:

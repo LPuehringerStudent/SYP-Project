@@ -6,6 +6,12 @@ import { isNullOrWhiteSpace } from "../utils/util";
 
 export const lootboxRouter = express.Router();
 
+function isConstraintError(err: unknown): boolean {
+    const msg = String(err);
+    return msg.includes("FOREIGN KEY constraint failed") || 
+           msg.includes("UNIQUE constraint failed");
+}
+
 /**
  * @openapi
  * /lootboxes:
@@ -204,13 +210,9 @@ lootboxRouter.get("/players/:playerId/lootboxes", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 lootboxId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Lootbox opened successfully"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox opened successfully"
  *       400:
  *         description: Missing required fields
  *         content:
@@ -278,11 +280,9 @@ lootboxRouter.post("/lootboxes", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Lootbox deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -291,6 +291,12 @@ lootboxRouter.post("/lootboxes", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Lootbox not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Cannot delete lootbox with existing drops
  *         content:
  *           application/json:
  *             schema:
@@ -322,7 +328,11 @@ lootboxRouter.delete("/lootboxes/:id", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Lootbox not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
@@ -562,15 +572,17 @@ lootboxRouter.get("/lootboxes/:lootboxId/drops", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 dropId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Drop recorded successfully"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Drop recorded successfully"
  *       400:
  *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Duplicate drop (lootboxId, stoveId combination already exists)
  *         content:
  *           application/json:
  *             schema:
@@ -604,7 +616,11 @@ lootboxRouter.post("/lootbox-drops", (req, res) => {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to record drop" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
