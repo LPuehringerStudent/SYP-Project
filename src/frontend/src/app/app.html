@@ -1,1 +1,60 @@
-<router-outlet />
+<!-- Sidebar -->
+<nav class="sidebar" [class.open]="sidebarOpen">
+  <a href="#">Home</a>
+  <a href="#">Marketplace</a>
+  <a href="#">Update Log</a>
+  <a href="#">Support</a>
+</nav>
+
+<!-- Overlay -->
+<div
+  class="overlay"
+  [class.show]="sidebarOpen"
+  (click)="toggleSidebar()">
+</div>
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="menu-btn" (click)="toggleSidebar()">☰</div>
+    <div class="logo">EmberExchange</div>
+  </div>
+
+  <div class="topbar-right">
+    <span title="Settings" (click)="toggleSettings()">⚙️</span>
+    <span title="Login" (click)="toggleLogin()">👤</span>
+
+    <!-- Settings dropdown -->
+    <div class="dropdown" [class.show]="settingsOpen">
+      <div>Account Data</div>
+      <div>UI</div>
+    </div>
+
+    <!-- Login dropdown -->
+    <div class="dropdown login" [class.show]="loginOpen">
+      <div>Sign In</div>
+      <div>Sign Up</div>
+      <div>Logout</div>
+    </div>
+  </div>
+</header>
+
+<!-- Main content -->
+<main class="content">
+  <div class="card-grid">
+    <div class="card">
+      <h1>🎁 Lootboxes</h1>
+      <p>Access and manage lootboxes. Placeholder content.</p>
+    </div>
+
+    <div class="card">
+      <h1>🎮 Games</h1>
+      <p>Browse available games. Placeholder content.</p>
+    </div>
+
+    <div class="card">
+      <h1>🛒 Marketplace</h1>
+      <p>Buy, sell, and trade items. Placeholder content.</p>
+    </div>
+  </div>
+</main>

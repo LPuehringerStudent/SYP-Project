@@ -1,1 +1,207 @@
-/* Minimal styles - to be added later */
+/* ===== Reset & base ===== */
+* {
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f6f9;
+  color: #1f2937;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== Topbar ===== */
+.topbar {
+  height: 64px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #3f51b5;
+  letter-spacing: 0.3px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+}
+
+.topbar-right span {
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.topbar-right span:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+/* ===== Dropdowns ===== */
+.dropdown {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  min-width: 180px;
+  padding: 8px 0;
+  display: none;
+  animation: fadeIn 0.15s ease;
+}
+
+.dropdown.login {
+  right: 42px;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown div {
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown div:hover {
+  background: #f0f2f7;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  padding-top: 80px;
+  background: linear-gradient(180deg, #3f51b5, #5c6bc0);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 9;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar a {
+  display: block;
+  padding: 14px 24px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  opacity: 0.9;
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.sidebar a:hover {
+  background: rgba(255,255,255,0.15);
+  padding-left: 30px;
+  opacity: 1;
+}
+
+/* ===== Overlay ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 8;
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ===== Main Content ===== */
+.content {
+  padding: 96px 24px 24px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 50px rgba(63,81,181,0.25);
+}
+
+.card h1 {
+  margin: 0 0 12px;
+  font-size: 24px;
+}
+
+.card p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
