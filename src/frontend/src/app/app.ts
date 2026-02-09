@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MainMenuComponent } from './typescript/main-menu';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  template: '<router-outlet />',
+  imports: [MainMenuComponent, RouterOutlet],
+  template: `
+    <app-main-menu></app-main-menu>
+    <router-outlet></router-outlet>
+  `
 })
-export class App {
-  // Minimal app - display nothing yet
-}
+export class App {}
