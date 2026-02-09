@@ -1,3 +1,11 @@
+export enum Rarity {
+    COMMON = "common",
+    RARE = "rare",
+    MYTHIC = "mythic",
+    LEGENDARY = "legendary",
+    LIMITED = "limited"
+}
+
 // Player
 export interface Player {
     username: string;
@@ -15,7 +23,7 @@ export interface PlayerRow extends Player {
 export interface StoveType {
     name: string;
     imageUrl: string;
-    rarity: "common" | "rare" | "mythic" | "legendary" | "limited";
+    rarity: Rarity;
     lootboxWeight: number;
 }
 

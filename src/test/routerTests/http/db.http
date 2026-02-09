@@ -1,0 +1,5 @@
+### Health Check
+GET http://localhost:3000/api/health
+
+### Database Connection Test
+GET http://localhost:3000/api/db-test

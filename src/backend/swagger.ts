@@ -28,6 +28,103 @@ const options: swaggerJsdoc.Options = {
                     },
                     required: ["playerId", "username", "coins", "lootboxCount", "isAdmin", "joinedAt"],
                 },
+                LootboxType: {
+                    type: "object",
+                    properties: {
+                        lootboxTypeId: { type: "integer", description: "Unique lootbox type ID" },
+                        name: { type: "string", description: "Lootbox type name" },
+                        description: { type: "string", nullable: true, description: "Description of the lootbox" },
+                        costCoins: { type: "integer", description: "Cost in coins" },
+                        costFree: { type: "integer", description: "Whether the lootbox is free (0 = false, 1 = true)" },
+                        dailyLimit: { type: "integer", nullable: true, description: "Daily limit (null = unlimited)" },
+                        isAvailable: { type: "integer", description: "Availability flag (0 = false, 1 = true)" },
+                    },
+                    required: ["lootboxTypeId", "name", "costCoins", "costFree", "isAvailable"],
+                },
+                Lootbox: {
+                    type: "object",
+                    properties: {
+                        lootboxId: { type: "integer", description: "Unique lootbox ID" },
+                        lootboxTypeId: { type: "integer", description: "Type of lootbox" },
+                        playerId: { type: "integer", description: "Player who opened it" },
+                        openedAt: { type: "string", format: "date-time", description: "When the lootbox was opened" },
+                        acquiredHow: { type: "string", enum: ["free", "purchase", "reward"], description: "How it was acquired" },
+                    },
+                    required: ["lootboxId", "lootboxTypeId", "playerId", "openedAt", "acquiredHow"],
+                },
+                LootboxDrop: {
+                    type: "object",
+                    properties: {
+                        dropId: { type: "integer", description: "Unique drop ID" },
+                        lootboxId: { type: "integer", description: "Lootbox that produced this drop" },
+                        stoveId: { type: "integer", description: "Stove that was dropped" },
+                    },
+                    required: ["dropId", "lootboxId", "stoveId"],
+                },
+                StoveType: {
+                    type: "object",
+                    properties: {
+                        typeId: { type: "integer", description: "Unique stove type ID" },
+                        name: { type: "string", description: "Stove type name" },
+                        imageUrl: { type: "string", description: "URL to stove image" },
+                        rarity: { type: "string", enum: ["common", "rare", "mythic", "legendary", "limited"], description: "Rarity level" },
+                        lootboxWeight: { type: "integer", description: "Drop probability weight (higher = more common)" },
+                    },
+                    required: ["typeId", "name", "imageUrl", "rarity", "lootboxWeight"],
+                },
+                Stove: {
+                    type: "object",
+                    properties: {
+                        stoveId: { type: "integer", description: "Unique stove ID" },
+                        typeId: { type: "integer", description: "Stove type ID" },
+                        currentOwnerId: { type: "integer", description: "Current owner's player ID" },
+                        mintedAt: { type: "string", format: "date-time", description: "When the stove was created" },
+                    },
+                    required: ["stoveId", "typeId", "currentOwnerId", "mintedAt"],
+                },
+                Listing: {
+                    type: "object",
+                    properties: {
+                        listingId: { type: "integer", description: "Unique listing ID" },
+                        sellerId: { type: "integer", description: "Seller's player ID" },
+                        stoveId: { type: "integer", description: "Stove being sold" },
+                        price: { type: "integer", description: "Asking price in coins" },
+                        listedAt: { type: "string", format: "date-time", description: "When the listing was created" },
+                        status: { type: "string", enum: ["active", "cancelled", "sold"], description: "Listing status" },
+                    },
+                    required: ["listingId", "sellerId", "stoveId", "price", "listedAt", "status"],
+                },
+                Trade: {
+                    type: "object",
+                    properties: {
+                        tradeId: { type: "integer", description: "Unique trade ID" },
+                        listingId: { type: "integer", description: "Listing that was purchased" },
+                        buyerId: { type: "integer", description: "Buyer's player ID" },
+                        executedAt: { type: "string", format: "date-time", description: "When the trade occurred" },
+                    },
+                    required: ["tradeId", "listingId", "buyerId", "executedAt"],
+                },
+                Ownership: {
+                    type: "object",
+                    properties: {
+                        ownershipId: { type: "integer", description: "Unique ownership record ID" },
+                        stoveId: { type: "integer", description: "Stove ID" },
+                        playerId: { type: "integer", description: "Player who acquired it" },
+                        acquiredAt: { type: "string", format: "date-time", description: "When it was acquired" },
+                        acquiredHow: { type: "string", enum: ["lootbox", "trade", "mini-game"], description: "How it was acquired" },
+                    },
+                    required: ["ownershipId", "stoveId", "playerId", "acquiredAt", "acquiredHow"],
+                },
+                PriceHistory: {
+                    type: "object",
+                    properties: {
+                        historyId: { type: "integer", description: "Unique price history ID" },
+                        typeId: { type: "integer", description: "Stove type ID" },
+                        salePrice: { type: "integer", description: "Sale price in coins" },
+                        saleDate: { type: "string", format: "date-time", description: "When the sale occurred" },
+                    },
+                    required: ["historyId", "typeId", "salePrice", "saleDate"],
+                },
                 Error: {
                     type: "object",
                     properties: {
