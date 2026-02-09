@@ -267,13 +267,7 @@ tradeRouter.get("/players/:buyerId/trades", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 tradeId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Trade executed successfully"
+ *               $ref: '#/components/schemas/CreateTradeResponse'
  *       400:
  *         description: Missing fields or listing not active
  *         content:
@@ -439,11 +433,9 @@ tradeRouter.get("/trades/recent", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Trade deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Trade deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -503,11 +495,7 @@ tradeRouter.delete("/trades/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 count:
- *                   type: integer
- *                   example: 150
+ *               $ref: '#/components/schemas/CountResponse'
  *       500:
  *         description: Server error
  *         content:
@@ -550,11 +538,7 @@ tradeRouter.get("/trades/count", (_req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 count:
- *                   type: integer
- *                   example: 5
+ *               $ref: '#/components/schemas/CountResponse'
  *       400:
  *         description: Invalid ID format
  *         content:

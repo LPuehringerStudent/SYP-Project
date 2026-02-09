@@ -364,13 +364,7 @@ listingRouter.get("/stoves/:stoveId/listing", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 listingId:
- *                   type: integer
- *                 message:
- *                   type: string
- *                   example: "Listing created successfully"
+ *               $ref: '#/components/schemas/CreateListingResponse'
  *       400:
  *         description: Missing or invalid fields, or stove already listed
  *         content:
@@ -458,11 +452,9 @@ listingRouter.post("/listings", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Price updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Price updated"
  *       400:
  *         description: Invalid ID or price, or listing not active
  *         content:
@@ -535,11 +527,9 @@ listingRouter.patch("/listings/:id/price", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Listing cancelled"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Listing cancelled"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -606,11 +596,9 @@ listingRouter.patch("/listings/:id/cancel", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Listing deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Listing deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -677,11 +665,7 @@ listingRouter.delete("/listings/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 count:
- *                   type: integer
- *                   example: 3
+ *               $ref: '#/components/schemas/CountResponse'
  *       400:
  *         description: Invalid ID format
  *         content:

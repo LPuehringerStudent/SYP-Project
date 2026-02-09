@@ -131,6 +131,54 @@ const options: swaggerJsdoc.Options = {
                         error: { type: "string", description: "Error message" },
                     },
                 },
+                SuccessMessage: {
+                    type: "object",
+                    properties: {
+                        message: { type: "string", description: "Success message" },
+                    },
+                },
+                CountResponse: {
+                    type: "object",
+                    properties: {
+                        count: { type: "integer", description: "Count value" },
+                    },
+                },
+                PriceStats: {
+                    type: "object",
+                    properties: {
+                        average: { type: "number", description: "Average price" },
+                        min: { type: "integer", description: "Minimum price" },
+                        max: { type: "integer", description: "Maximum price" },
+                        count: { type: "integer", description: "Number of sales" },
+                    },
+                },
+                CreatePlayerResponse: {
+                    type: "object",
+                    properties: {
+                        playerId: { type: "integer", description: "Created player ID" },
+                        username: { type: "string", description: "Player username" },
+                    },
+                },
+                CreateListingResponse: {
+                    type: "object",
+                    properties: {
+                        listingId: { type: "integer", description: "Created listing ID" },
+                        message: { type: "string", description: "Success message" },
+                    },
+                },
+                CreateTradeResponse: {
+                    type: "object",
+                    properties: {
+                        tradeId: { type: "integer", description: "Created trade ID" },
+                        message: { type: "string", description: "Success message" },
+                    },
+                },
+                TotalWeightResponse: {
+                    type: "object",
+                    properties: {
+                        totalWeight: { type: "integer", description: "Total lootbox weight" },
+                    },
+                },
             },
         },
     },

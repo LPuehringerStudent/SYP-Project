@@ -152,12 +152,7 @@ playerRouter.get("/players/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 playerId:
- *                   type: integer
- *                 username:
- *                   type: string
+ *               $ref: '#/components/schemas/CreatePlayerResponse'
  *       400:
  *         description: Username is required
  *         content:
@@ -255,11 +250,9 @@ playerRouter.post("/players", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Coins updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Coins updated"
  *       400:
  *         description: Invalid ID or coins value
  *         content:
@@ -268,6 +261,12 @@ playerRouter.post("/players", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
  *         content:
  *           application/json:
  *             schema:
@@ -350,11 +349,9 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Lootbox count updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox count updated"
  *       400:
  *         description: Invalid ID or lootbox count
  *         content:
@@ -363,6 +360,12 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
  *         content:
  *           application/json:
  *             schema:
@@ -431,11 +434,9 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Player deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Player deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -444,6 +445,12 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Cannot delete player with existing references (stoves, listings, etc.)
  *         content:
  *           application/json:
  *             schema:
