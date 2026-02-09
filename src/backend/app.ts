@@ -57,14 +57,14 @@ function initDb(): void {
         unit = new Unit(false);
         const result = ensureSampleDataInserted(unit);
         if (result === "inserted") {
-            console.log("📊 Sample data inserted");
+            console.log("Sample data inserted");
             unit.complete(true);
         } else {
-            console.log("📊 Sample data skipped (already exists)");
+            console.log("Sample data skipped (already exists)");
             unit.complete(false);
         }
     } catch (error) {
-        console.error("❌ Database initialization failed:", error);
+        console.error("Database initialization failed:", error);
         if (unit) {
             try { unit.complete(false); } catch { /* ignore */ }
         }

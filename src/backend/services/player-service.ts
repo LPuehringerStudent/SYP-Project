@@ -1,6 +1,6 @@
 import { ServiceBase } from "./service-base";
 import { Unit } from "../utils/unit";
-import { Player, PlayerRow } from "../../shared/model";
+import {PlayerRow} from "../../shared/model";
 
 export class PlayerService extends ServiceBase {
     constructor(unit: Unit) {
