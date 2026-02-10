@@ -101,47 +101,247 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
         }
     }
 
-    function insertLootboxType(): void {
-        const stmt = unit.prepare<
-            unknown,
-            { name: string; description: string; costCoins: number; costFree: number; isAvailable: number }
-        >(
-            `insert into LootboxType (name, description, costCoins, costFree, isAvailable) 
-             values (@name, @description, @costCoins, @costFree, @isAvailable)`,
-            {
-                name: "Standard Lootbox",
-                description: "A standard lootbox with common to legendary items",
-                costCoins: 0,
-                costFree: 1,
-                isAvailable: 1
-            }
-        );
-        stmt.run();
-        console.log("✅ Default LootboxType inserted");
+    function insertLootboxTypes(): void {
+        const types = [
+            { name: "Standard Lootbox", description: "A standard lootbox with common to legendary items", costCoins: 0, costFree: 1, isAvailable: 1 },
+            { name: "Premium Lootbox", description: "Higher chance for rare and above items", costCoins: 500, costFree: 0, isAvailable: 1 },
+            { name: "Legendary Crate", description: "Guaranteed legendary or limited item", costCoins: 5000, costFree: 0, isAvailable: 1 }
+        ];
+        
+        for (const type of types) {
+            const stmt = unit.prepare<
+                unknown,
+                { name: string; description: string; costCoins: number; costFree: number; isAvailable: number }
+            >(
+                `insert into LootboxType (name, description, costCoins, costFree, isAvailable) 
+                 values (@name, @description, @costCoins, @costFree, @isAvailable)`,
+                type
+            );
+            stmt.run();
+        }
+        console.log("✅ LootboxTypes inserted");
     }
 
-    function insertPlayer(): void {
+    function insertPlayers(): void {
+        const players = [
+            { username: "admin", coins: 999999, lootboxCount: 100, isAdmin: 1 },
+            { username: "player1", coins: 5000, lootboxCount: 10, isAdmin: 0 },
+            { username: "player2", coins: 3500, lootboxCount: 5, isAdmin: 0 },
+            { username: "trader_joe", coins: 10000, lootboxCount: 20, isAdmin: 0 },
+            { username: "collector", coins: 2500, lootboxCount: 3, isAdmin: 0 }
+        ];
+        
+        for (const player of players) {
+            const stmt = unit.prepare<
+                unknown,
+                { username: string; coins: number; lootboxCount: number; isAdmin: number; joinedAt: string }
+            >(
+                `insert into Player (username, coins, lootboxCount, isAdmin, joinedAt) 
+                 values (@username, @coins, @lootboxCount, @isAdmin, @joinedAt)`,
+                { ...player, joinedAt: new Date().toISOString() }
+            );
+            stmt.run();
+        }
+        console.log("✅ Players inserted");
+    }
+
+    function insertStoveTypes(): void {
+        const stoves = [
+            { name: "Rusty Stove", imageUrl: "/images/stoves/rusty.png", rarity: "common", lootboxWeight: 100 },
+            { name: "Standard Stove", imageUrl: "/images/stoves/standard.png", rarity: "common", lootboxWeight: 80 },
+            { name: "Bronze Stove", imageUrl: "/images/stoves/bronze.png", rarity: "rare", lootboxWeight: 50 },
+            { name: "Silver Stove", imageUrl: "/images/stoves/silver.png", rarity: "rare", lootboxWeight: 40 },
+            { name: "Golden Stove", imageUrl: "/images/stoves/golden.png", rarity: "mythic", lootboxWeight: 20 },
+            { name: "Crystal Stove", imageUrl: "/images/stoves/crystal.png", rarity: "mythic", lootboxWeight: 15 },
+            { name: "Dragon Stove", imageUrl: "/images/stoves/dragon.png", rarity: "legendary", lootboxWeight: 5 },
+            { name: "Phoenix Stove", imageUrl: "/images/stoves/phoenix.png", rarity: "legendary", lootboxWeight: 3 },
+            { name: "One of a Kind", imageUrl: "/images/stoves/unique.png", rarity: "limited", lootboxWeight: 1 }
+        ];
+        
+        for (const stove of stoves) {
+            const stmt = unit.prepare<
+                unknown,
+                { name: string; imageUrl: string; rarity: string; lootboxWeight: number }
+            >(
+                `insert into StoveType (name, imageUrl, rarity, lootboxWeight) 
+                 values (@name, @imageUrl, @rarity, @lootboxWeight)`,
+                stove
+            );
+            stmt.run();
+        }
+        console.log("✅ StoveTypes inserted");
+    }
+
+    function insertStoves(): void {
+        // player1 has some stoves
+        const stoves = [
+            { typeId: 1, currentOwnerId: 2, mintedAt: new Date(Date.now() - 86400000 * 5).toISOString() }, // Rusty
+            { typeId: 2, currentOwnerId: 2, mintedAt: new Date(Date.now() - 86400000 * 3).toISOString() }, // Standard
+            { typeId: 3, currentOwnerId: 2, mintedAt: new Date(Date.now() - 86400000 * 1).toISOString() }, // Bronze
+            { typeId: 4, currentOwnerId: 3, mintedAt: new Date(Date.now() - 86400000 * 2).toISOString() }, // Silver
+            { typeId: 5, currentOwnerId: 4, mintedAt: new Date(Date.now() - 86400000 * 1).toISOString() }, // Golden
+            { typeId: 7, currentOwnerId: 5, mintedAt: new Date().toISOString() } // Dragon
+        ];
+        
+        for (const stove of stoves) {
+            const stmt = unit.prepare<
+                unknown,
+                { typeId: number; currentOwnerId: number; mintedAt: string }
+            >(
+                `insert into Stove (typeId, currentOwnerId, mintedAt) 
+                 values (@typeId, @currentOwnerId, @mintedAt)`,
+                stove
+            );
+            stmt.run();
+        }
+        console.log("✅ Stoves inserted");
+    }
+
+    function insertLootboxes(): void {
+        const lootboxes = [
+            { lootboxTypeId: 1, playerId: 2, openedAt: new Date(Date.now() - 86400000 * 5).toISOString(), acquiredHow: "free" },
+            { lootboxTypeId: 1, playerId: 2, openedAt: new Date(Date.now() - 86400000 * 3).toISOString(), acquiredHow: "purchase" },
+            { lootboxTypeId: 1, playerId: 2, openedAt: new Date(Date.now() - 86400000 * 1).toISOString(), acquiredHow: "free" },
+            { lootboxTypeId: 2, playerId: 3, openedAt: new Date(Date.now() - 86400000 * 2).toISOString(), acquiredHow: "purchase" },
+            { lootboxTypeId: 1, playerId: 4, openedAt: new Date(Date.now() - 86400000 * 1).toISOString(), acquiredHow: "reward" }
+        ];
+        
+        for (const lootbox of lootboxes) {
+            const stmt = unit.prepare<
+                unknown,
+                { lootboxTypeId: number; playerId: number; openedAt: string; acquiredHow: string }
+            >(
+                `insert into Lootbox (lootboxTypeId, playerId, openedAt, acquiredHow) 
+                 values (@lootboxTypeId, @playerId, @openedAt, @acquiredHow)`,
+                lootbox
+            );
+            stmt.run();
+        }
+        console.log("✅ Lootboxes inserted");
+    }
+
+    function insertLootboxDrops(): void {
+        // Connect stoves to lootboxes that created them
+        const drops = [
+            { lootboxId: 1, stoveId: 1 }, // Rusty from lootbox 1
+            { lootboxId: 2, stoveId: 2 }, // Standard from lootbox 2
+            { lootboxId: 3, stoveId: 3 }, // Bronze from lootbox 3
+            { lootboxId: 4, stoveId: 4 }, // Silver from lootbox 4
+            { lootboxId: 5, stoveId: 5 }  // Golden from lootbox 5
+        ];
+        
+        for (const drop of drops) {
+            const stmt = unit.prepare<
+                unknown,
+                { lootboxId: number; stoveId: number }
+            >(
+                `insert into LootboxDrop (lootboxId, stoveId) 
+                 values (@lootboxId, @stoveId)`,
+                drop
+            );
+            stmt.run();
+        }
+        console.log("✅ LootboxDrops inserted");
+    }
+
+    function insertOwnerships(): void {
+        const ownerships = [
+            { stoveId: 1, playerId: 2, acquiredAt: new Date(Date.now() - 86400000 * 5).toISOString(), acquiredHow: "lootbox" },
+            { stoveId: 2, playerId: 2, acquiredAt: new Date(Date.now() - 86400000 * 3).toISOString(), acquiredHow: "lootbox" },
+            { stoveId: 3, playerId: 2, acquiredAt: new Date(Date.now() - 86400000 * 1).toISOString(), acquiredHow: "lootbox" },
+            { stoveId: 4, playerId: 3, acquiredAt: new Date(Date.now() - 86400000 * 2).toISOString(), acquiredHow: "lootbox" },
+            { stoveId: 5, playerId: 4, acquiredAt: new Date(Date.now() - 86400000 * 1).toISOString(), acquiredHow: "lootbox" },
+            { stoveId: 6, playerId: 5, acquiredAt: new Date().toISOString(), acquiredHow: "lootbox" }
+        ];
+        
+        for (const ownership of ownerships) {
+            const stmt = unit.prepare<
+                unknown,
+                { stoveId: number; playerId: number; acquiredAt: string; acquiredHow: string }
+            >(
+                `insert into Ownership (stoveId, playerId, acquiredAt, acquiredHow) 
+                 values (@stoveId, @playerId, @acquiredAt, @acquiredHow)`,
+                ownership
+            );
+            stmt.run();
+        }
+        console.log("✅ Ownerships inserted");
+    }
+
+    function insertListings(): void {
+        const listings = [
+            { sellerId: 2, stoveId: 3, price: 1500, listedAt: new Date(Date.now() - 3600000 * 2).toISOString(), status: "active" },
+            { sellerId: 3, stoveId: 4, price: 2500, listedAt: new Date(Date.now() - 3600000 * 4).toISOString(), status: "active" },
+            { sellerId: 2, stoveId: 1, price: 500, listedAt: new Date(Date.now() - 86400000).toISOString(), status: "sold" }
+        ];
+        
+        for (const listing of listings) {
+            const stmt = unit.prepare<
+                unknown,
+                { sellerId: number; stoveId: number; price: number; listedAt: string; status: string }
+            >(
+                `insert into Listing (sellerId, stoveId, price, listedAt, status) 
+                 values (@sellerId, @stoveId, @price, @listedAt, @status)`,
+                listing
+            );
+            stmt.run();
+        }
+        console.log("✅ Listings inserted");
+    }
+
+    function insertTrades(): void {
+        // One completed trade
         const stmt = unit.prepare<
             unknown,
-            { username: string; coins: number; lootboxCount: number; isAdmin: number; joinedAt: string }
+            { listingId: number; buyerId: number; executedAt: string }
         >(
-            `insert into Player (username, coins, lootboxCount, isAdmin, joinedAt) 
-             values (@username, @coins, @lootboxCount, @isAdmin, @joinedAt)`,
+            `insert into Trade (listingId, buyerId, executedAt) 
+             values (@listingId, @buyerId, @executedAt)`,
             {
-                username: "admin",
-                coins: 999999,
-                lootboxCount: 100,
-                isAdmin: 1,
-                joinedAt: new Date().toISOString()
+                listingId: 3,
+                buyerId: 4,
+                executedAt: new Date(Date.now() - 3600000 * 12).toISOString()
             }
         );
         stmt.run();
-        console.log("✅ Admin player inserted");
+        console.log("✅ Trades inserted");
+    }
+
+    function insertPriceHistory(): void {
+        const prices = [
+            { typeId: 1, salePrice: 400, saleDate: new Date(Date.now() - 86400000 * 10).toISOString() },
+            { typeId: 1, salePrice: 500, saleDate: new Date(Date.now() - 86400000 * 5).toISOString() },
+            { typeId: 1, salePrice: 500, saleDate: new Date(Date.now() - 3600000 * 12).toISOString() },
+            { typeId: 3, salePrice: 1500, saleDate: new Date(Date.now() - 86400000 * 7).toISOString() },
+            { typeId: 3, salePrice: 1800, saleDate: new Date(Date.now() - 86400000 * 3).toISOString() },
+            { typeId: 4, salePrice: 2500, saleDate: new Date(Date.now() - 86400000 * 4).toISOString() }
+        ];
+        
+        for (const price of prices) {
+            const stmt = unit.prepare<
+                unknown,
+                { typeId: number; salePrice: number; saleDate: string }
+            >(
+                `insert into PriceHistory (typeId, salePrice, saleDate) 
+                 values (@typeId, @salePrice, @saleDate)`,
+                price
+            );
+            stmt.run();
+        }
+        console.log("✅ PriceHistory inserted");
     }
 
     if (!(alreadyPresent())) {
-        insertLootboxType();
-        insertPlayer();
+        insertLootboxTypes();
+        insertPlayers();
+        insertStoveTypes();
+        insertStoves();
+        insertLootboxes();
+        insertLootboxDrops();
+        insertOwnerships();
+        insertListings();
+        insertTrades();
+        insertPriceHistory();
         return "inserted";
     }
     return "skipped";

@@ -6,6 +6,12 @@ import { isNullOrWhiteSpace } from "../utils/util";
 
 export const playerRouter = express.Router();
 
+function isConstraintError(err: unknown): boolean {
+    const msg = String(err);
+    return msg.includes("FOREIGN KEY constraint failed") || 
+           msg.includes("UNIQUE constraint failed");
+}
+
 /**
  * @openapi
  * /players:
@@ -146,12 +152,7 @@ playerRouter.get("/players/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 playerId:
- *                   type: integer
- *                 username:
- *                   type: string
+ *               $ref: '#/components/schemas/CreatePlayerResponse'
  *       400:
  *         description: Username is required
  *         content:
@@ -204,7 +205,11 @@ playerRouter.post("/players", (req, res) => {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to create player" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
@@ -245,11 +250,9 @@ playerRouter.post("/players", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Coins updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Coins updated"
  *       400:
  *         description: Invalid ID or coins value
  *         content:
@@ -258,6 +261,12 @@ playerRouter.post("/players", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
  *         content:
  *           application/json:
  *             schema:
@@ -295,7 +304,11 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
@@ -336,11 +349,9 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Lootbox count updated"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox count updated"
  *       400:
  *         description: Invalid ID or lootbox count
  *         content:
@@ -349,6 +360,12 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
  *         content:
  *           application/json:
  *             schema:
@@ -386,7 +403,11 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }
@@ -413,11 +434,9 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Player deleted"
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Player deleted"
  *       400:
  *         description: Invalid ID format
  *         content:
@@ -426,6 +445,12 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Cannot delete player with existing references (stoves, listings, etc.)
  *         content:
  *           application/json:
  *             schema:
@@ -457,7 +482,11 @@ playerRouter.delete("/players/:id", (req, res) => {
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
     } finally {
         unit.complete(ok);
     }

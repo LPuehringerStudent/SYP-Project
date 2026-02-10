@@ -1,14 +1,23 @@
+import cors from "cors";
 import express from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import { Unit, ensureSampleDataInserted } from "./utils/unit";
 import { playerRouter } from "./routers/player-router";
+import { lootboxRouter } from "./routers/lootbox-router";
+import { stoveTypeRouter } from "./routers/stove-type-router";
+import { stoveRouter } from "./routers/stove-router";
+import { ownershipRouter } from "./routers/ownership-router";
+import { priceHistoryRouter } from "./routers/price-history-router";
+import { listingRouter } from "./routers/listing-router";
+import { tradeRouter } from "./routers/trade-router";
 import { swaggerSpec } from "./swagger";
 
 export const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,6 +29,13 @@ app.use(express.static(path.join(process.cwd(), "src/frontend")));
 
 // API Routes
 app.use("/api", playerRouter);
+app.use("/api", lootboxRouter);
+app.use("/api", stoveTypeRouter);
+app.use("/api", stoveRouter);
+app.use("/api", ownershipRouter);
+app.use("/api", priceHistoryRouter);
+app.use("/api", listingRouter);
+app.use("/api", tradeRouter);
 
 // Health check endpoint
 app.get("/api/health", (_req, res) => {
