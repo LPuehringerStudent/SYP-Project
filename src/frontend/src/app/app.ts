@@ -5,6 +5,7 @@ import { MainMenuComponent } from './typescript/main-menu';
 @Component({
   selector: 'app-root',
   standalone: true,
+  //temporary solution with lootbox
   imports: [MainMenuComponent, RouterOutlet],
   template: `
     <app-main-menu></app-main-menu>

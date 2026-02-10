@@ -1,8 +1,10 @@
 ﻿import { Component } from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-main-menu',
   templateUrl: '../app.html',
+  imports: [RouterOutlet],
   styleUrls: ['../app.css'],
   standalone: true
 })
