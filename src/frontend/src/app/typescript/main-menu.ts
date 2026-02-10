@@ -1,10 +1,12 @@
 ﻿import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-main-menu',
   templateUrl: '../app.html',
   styleUrls: ['../app.css'],
-  standalone: true
+  standalone: true,
+  imports: [RouterLink]
 })
 export class MainMenuComponent {
   sidebarOpen = false;

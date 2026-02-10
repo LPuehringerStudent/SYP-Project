@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
+import { TestPageComponent } from './test-page/test-page';
 
 export const routes: Routes = [
-  // Routes will be added here when components are created
+  { path: 'test', component: TestPageComponent },
 ];
