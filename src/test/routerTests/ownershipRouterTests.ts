@@ -339,7 +339,7 @@ describe('Ownership API Endpoints', () => {
                 .expect(404);
 
             expect(response.body).toHaveProperty('error');
-            expect(response.body.error.toLowerCase()).toContain('not found');
+            expect(response.body.error.toLowerCase()).toContain('no ownership record found');
         });
 
         it('should return 400 for invalid stove ID', async () => {
