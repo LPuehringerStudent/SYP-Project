@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MainMenuComponent } from './typescript/main-menu';
+import { MainComponent } from './typescript/main-component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MainMenuComponent, RouterOutlet],
+  //temporary solution with lootbox
+  imports: [MainComponent, RouterOutlet],
   template: `
-    <app-main-menu></app-main-menu>
+    <app-main></app-main>
     <router-outlet></router-outlet>
   `
 })

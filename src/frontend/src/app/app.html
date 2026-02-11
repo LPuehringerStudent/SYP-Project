@@ -2,6 +2,7 @@
 <nav class="sidebar" [class.open]="sidebarOpen">
   <a href="#">Home</a>
   <a href="#">Marketplace</a>
+  <a href="/lootboxes">Lootboxes</a>
   <a href="#">Update Log</a>
   <a href="#">Support</a>
   <a routerLink="/test">API Test</a>
@@ -27,35 +28,39 @@
 
     <!-- Settings dropdown -->
     <div class="dropdown" [class.show]="settingsOpen">
-      <div>Account Data</div>
-      <div>UI</div>
+      <ul class="list">
+        <li class="element">
+          <span class="label">Account Data</span>
+        </li>
+        <li class="element">
+          <span class="label">UI</span>
+        </li>
+      </ul>
     </div>
+
 
     <!-- Login dropdown -->
     <div class="dropdown login" [class.show]="loginOpen">
-      <div>Sign In</div>
-      <div>Sign Up</div>
-      <div>Logout</div>
+      <ul class="list">
+        <li class="element">
+          <span class="label">Sign In</span>
+        </li>
+        <li class="element">
+          <span class="label">Sign Up</span>
+        </li>
+
+        <div class="separator"></div>
+
+        <li class="element delete">
+          <span class="label">Logout</span>
+        </li>
+      </ul>
     </div>
+
   </div>
 </header>
 
 <!-- Main content -->
 <main class="content">
-  <div class="card-grid">
-    <div class="card">
-      <h1>🎁 Lootboxes</h1>
-      <p>Access and manage lootboxes. Placeholder content.</p>
-    </div>
-
-    <div class="card">
-      <h1>🎮 Games</h1>
-      <p>Browse available games. Placeholder content.</p>
-    </div>
-
-    <div class="card">
-      <h1>🛒 Marketplace</h1>
-      <p>Buy, sell, and trade items. Placeholder content.</p>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 </main>
