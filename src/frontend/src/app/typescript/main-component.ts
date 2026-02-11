@@ -3,14 +3,14 @@ import {RouterOutlet} from '@angular/router';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-main-menu',
+  selector: 'app-main',
   templateUrl: '../app.html',
   imports: [RouterOutlet, RouterLink],
   styleUrls: ['../app.css'],
   standalone: true,
 
 })
-export class MainMenuComponent {
+export class MainComponent {
   sidebarOpen = false;
   settingsOpen = false;
   loginOpen = false;

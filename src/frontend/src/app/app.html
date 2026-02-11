@@ -28,16 +28,35 @@
 
     <!-- Settings dropdown -->
     <div class="dropdown" [class.show]="settingsOpen">
-      <div>Account Data</div>
-      <div>UI</div>
+      <ul class="list">
+        <li class="element">
+          <span class="label">Account Data</span>
+        </li>
+        <li class="element">
+          <span class="label">UI</span>
+        </li>
+      </ul>
     </div>
+
 
     <!-- Login dropdown -->
     <div class="dropdown login" [class.show]="loginOpen">
-      <div>Sign In</div>
-      <div>Sign Up</div>
-      <div>Logout</div>
+      <ul class="list">
+        <li class="element">
+          <span class="label">Sign In</span>
+        </li>
+        <li class="element">
+          <span class="label">Sign Up</span>
+        </li>
+
+        <div class="separator"></div>
+
+        <li class="element delete">
+          <span class="label">Logout</span>
+        </li>
+      </ul>
     </div>
+
   </div>
 </header>
 
