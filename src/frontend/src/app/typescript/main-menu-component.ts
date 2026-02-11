@@ -3,7 +3,7 @@
 @Component({
   selector: 'app-lootbox',
   standalone: true,
-  templateUrl: '../html/lootbox.html',
+  templateUrl: '../html/main-menu.html',
   styleUrls: ['../app.css']
 })
 export class MainMenuComponent {}
