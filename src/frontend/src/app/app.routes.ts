@@ -1,10 +1,13 @@
 import { Routes } from '@angular/router';
 import {LootboxComponent} from './typescript/lootbox.component';
 import { TestPageComponent } from './test-page/test-page';
+import {MainMenuComponent} from './typescript/main-menu-component';
+import {SettingsComponent} from './typescript/settings-component';
 
 export const routes: Routes = [
-  { path: 'test', component: TestPageComponent },
   // Routes will be added here when components are created
-  // still to be learned
-  {path: 'lootboxes', component: LootboxComponent}
+  { path: 'test', component: TestPageComponent },
+  {path: 'lootboxes', component: LootboxComponent},
+  {path: 'main-menu', component: MainMenuComponent},
+  {path: 'settings', component: SettingsComponent},
 ];

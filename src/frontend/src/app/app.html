@@ -1,6 +1,6 @@
 <!-- Sidebar -->
 <nav class="sidebar" [class.open]="sidebarOpen">
-  <a href="#">Home</a>
+  <a href="/main-menu">Home</a>
   <a href="#">Marketplace</a>
   <a href="/lootboxes">Lootboxes</a>
   <a href="#">Update Log</a>
@@ -19,26 +19,13 @@
 <header class="topbar">
   <div class="topbar-left">
     <div class="menu-btn" (click)="toggleSidebar()">☰</div>
-    <div class="logo">EmberExchange</div>
+    <div class="logo" routerLink="/main-menu" style="cursor: pointer;">
+      Ember Exchange
+    </div>
   </div>
 
   <div class="topbar-right">
-    <span title="Settings" (click)="toggleSettings()">⚙️</span>
     <span title="Login" (click)="toggleLogin()">👤</span>
-
-    <!-- Settings dropdown -->
-    <div class="dropdown" [class.show]="settingsOpen">
-      <ul class="list">
-        <li class="element">
-          <span class="label">Account Data</span>
-        </li>
-        <li class="element">
-          <span class="label">UI</span>
-        </li>
-      </ul>
-    </div>
-
-
     <!-- Login dropdown -->
     <div class="dropdown login" [class.show]="loginOpen">
       <ul class="list">
@@ -47,6 +34,9 @@
         </li>
         <li class="element">
           <span class="label">Sign Up</span>
+        </li>
+        <li class="element" routerLink="/settings" (click)="loginOpen = false">
+          <span class="label">Settings</span>
         </li>
 
         <div class="separator"></div>
