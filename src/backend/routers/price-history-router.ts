@@ -1,6 +1,7 @@
 import express from "express";
 import { Unit } from "../utils/unit";
 import { PriceHistoryService } from "../services/price-history-service";
+import { StoveTypeService } from "../services/stove-type-service";
 import { StatusCodes } from "http-status-codes";
 import { isNullOrWhiteSpace } from "../utils/util";
 
@@ -233,6 +234,19 @@ priceHistoryRouter.post("/price-history", (req, res) => {
             return;
         }
 
+        if (salePrice === 0) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "salePrice must be positive" });
+            return;
+        }
+
+        // Validate that typeId exists
+        const stoveTypeService = new StoveTypeService(unit);
+        const stoveType = stoveTypeService.getStoveTypeById(typeId);
+        if (!stoveType) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "Stove type not found" });
+            return;
+        }
+
         const [success, id] = service.recordSale(typeId, salePrice);
 
         if (success) {
@@ -294,12 +308,29 @@ priceHistoryRouter.get("/stove-types/:typeId/price-stats", (req, res) => {
             return;
         }
 
-        const average = service.getAveragePrice(Number(typeId));
-        const min = service.getMinPrice(Number(typeId));
-        const max = service.getMaxPrice(Number(typeId));
-        const count = service.countSales(Number(typeId));
+        const typeIdNum = Number(typeId);
+        const average = service.getAveragePrice(typeIdNum);
+        const min = service.getMinPrice(typeIdNum);
+        const max = service.getMaxPrice(typeIdNum);
+        const count = service.countSales(typeIdNum);
 
-        res.status(StatusCodes.OK).json({ average, min, max, count });
+        // Return 404 if no price history exists for this stove type
+        if (count === 0) {
+            res.status(StatusCodes.NOT_FOUND).json({ error: "Price history not found for this stove type" });
+            return;
+        }
+
+        // Calculate median
+        const prices = service.getPriceHistoryByTypeId(typeIdNum).map(r => r.salePrice).sort((a, b) => a - b);
+        let median = 0;
+        if (prices.length > 0) {
+            const mid = Math.floor(prices.length / 2);
+            median = prices.length % 2 === 0
+                ? (prices[mid - 1] + prices[mid]) / 2
+                : prices[mid];
+        }
+
+        res.status(StatusCodes.OK).json({ typeId: typeIdNum, average, min, max, count, median });
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
     } finally {
@@ -355,11 +386,18 @@ priceHistoryRouter.get("/stove-types/:typeId/recent-prices", (req, res) => {
     const unit = new Unit(true);
     const service = new PriceHistoryService(unit);
     const typeId = req.params.typeId;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limitParam = req.query.limit;
+    const limit = limitParam !== undefined ? parseInt(limitParam as string) : 10;
 
     try {
         if (isNullOrWhiteSpace(typeId) || isNaN(Number(typeId))) {
             res.status(StatusCodes.BAD_REQUEST).json({ error: "Type ID must be a valid number" });
+            return;
+        }
+
+        // Validate limit parameter if provided
+        if (limitParam !== undefined && (isNaN(limit) || limit <= 0)) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "Limit must be a valid number" });
             return;
         }
 
