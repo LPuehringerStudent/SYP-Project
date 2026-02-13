@@ -8,6 +8,6 @@ export const routes: Routes = [
   // Routes will be added here when components are created
   { path: 'test', component: TestPageComponent },
   {path: 'lootboxes', component: LootboxComponent},
-  {path: 'main-menu', component: MainMenuComponent},
+  {path: '', component: MainMenuComponent},
   {path: 'settings', component: SettingsComponent},
 ];
