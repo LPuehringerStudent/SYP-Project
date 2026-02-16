@@ -36,7 +36,6 @@ export class LootboxComponent implements AfterViewInit {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
-    // Element is ready now
   }
 
   private weightedPick(): LootItem {
@@ -60,20 +59,16 @@ export class LootboxComponent implements AfterViewInit {
   openBox(): void {
     this.buildStrip();
     this.showOverlay = true;
-    this.cdr.detectChanges(); // Force render the items
+    this.cdr.detectChanges();
 
-    // Wait for DOM to update
     setTimeout(() => {
       const itemsEl = this.itemsElement.nativeElement;
 
-      // Reset position first
       itemsEl.style.transition = 'none';
       itemsEl.style.transform = 'translateX(0px)';
 
-      // Force reflow
       void itemsEl.offsetHeight;
 
-      // Now apply transition and animate
       itemsEl.style.transition = 'transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)';
 
       setTimeout(() => {
@@ -92,7 +87,6 @@ export class LootboxComponent implements AfterViewInit {
           itemsEl.style.transform = `translateX(${offset}px)`;
         }
 
-        // Use timeout instead of transitionend (4 seconds for animation)
         setTimeout(() => {
           this.showResult();
         }, 4000);
@@ -103,7 +97,7 @@ export class LootboxComponent implements AfterViewInit {
   private showResult(): void {
     this.resultText = `You got: ${this.finalItem?.name || 'Unknown'}`;
     this.showPopup = true;
-    this.cdr.detectChanges(); // Force detect changes to show popup
+    this.cdr.detectChanges();
   }
 
   resetAll(): void {
