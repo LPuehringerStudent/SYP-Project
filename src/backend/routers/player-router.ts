@@ -6,7 +6,36 @@ import { isNullOrWhiteSpace } from "../utils/util";
 
 export const playerRouter = express.Router();
 
-// Get all players
+function isConstraintError(err: unknown): boolean {
+    const msg = String(err);
+    return msg.includes("FOREIGN KEY constraint failed") || 
+           msg.includes("UNIQUE constraint failed");
+}
+
+/**
+ * @openapi
+ * /players:
+ *   get:
+ *     summary: Get all players
+ *     description: Retrieves a list of all players in the system
+ *     tags:
+ *       - Players
+ *     responses:
+ *       200:
+ *         description: List of all players
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Player'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.get("/players", (_req, res) => {
     const unit = new Unit(true);
     const service = new PlayerService(unit);
@@ -21,7 +50,47 @@ playerRouter.get("/players", (_req, res) => {
     }
 });
 
-// Get player by ID
+/**
+ * @openapi
+ * /players/{id}:
+ *   get:
+ *     summary: Get player by ID
+ *     description: Retrieves a single player by their unique ID
+ *     tags:
+ *       - Players
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Player ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Player found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Player'
+ *       400:
+ *         description: Invalid ID format
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.get("/players/:id", (req, res) => {
     const unit = new Unit(true);
     const service = new PlayerService(unit);
@@ -48,10 +117,65 @@ playerRouter.get("/players/:id", (req, res) => {
     }
 });
 
-// Create new player
+/**
+ * @openapi
+ * /players:
+ *   post:
+ *     summary: Create a new player
+ *     description: Creates a new player with the given username and optional initial values
+ *     tags:
+ *       - Players
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Unique username for the player
+ *                 example: "player123"
+ *               coins:
+ *                 type: integer
+ *                 description: Initial coin amount (default 1000)
+ *                 example: 1500
+ *               lootboxCount:
+ *                 type: integer
+ *                 description: Initial lootbox count (default 10)
+ *                 example: 5
+ *     responses:
+ *       201:
+ *         description: Player created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreatePlayerResponse'
+ *       400:
+ *         description: Username is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Username already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.post("/players", (req, res) => {
     const unit = new Unit(false);
     const service = new PlayerService(unit);
+    let ok = false;
 
     try {
         const { username, coins, lootboxCount } = req.body;
@@ -75,23 +199,90 @@ playerRouter.post("/players", (req, res) => {
         );
 
         if (success) {
-            unit.complete(true);
+            ok = true;
             res.status(StatusCodes.CREATED).json({ playerId: id, username });
         } else {
-            unit.complete(false);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to create player" });
         }
     } catch (err) {
-        unit.complete(false);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
+    } finally {
+        unit.complete(ok);
     }
 });
 
-// Update player coins
+/**
+ * @openapi
+ * /players/{id}/coins:
+ *   patch:
+ *     summary: Update player coins
+ *     description: Updates the coin balance of a specific player
+ *     tags:
+ *       - Players
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Player ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - coins
+ *             properties:
+ *               coins:
+ *                 type: integer
+ *                 description: New coin amount (must be non-negative)
+ *                 example: 2000
+ *                 minimum: 0
+ *     responses:
+ *       200:
+ *         description: Coins updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Coins updated"
+ *       400:
+ *         description: Invalid ID or coins value
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.patch("/players/:id/coins", (req, res) => {
     const unit = new Unit(false);
     const service = new PlayerService(unit);
     const id = req.params.id;
+    let ok = false;
 
     try {
         if (isNullOrWhiteSpace(id) || isNaN(Number(id))) {
@@ -107,23 +298,90 @@ playerRouter.patch("/players/:id/coins", (req, res) => {
 
         const success = service.updatePlayerCoins(Number(id), coins);
         if (success) {
-            unit.complete(true);
+            ok = true;
             res.status(StatusCodes.OK).json({ message: "Coins updated" });
         } else {
-            unit.complete(false);
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        unit.complete(false);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
+    } finally {
+        unit.complete(ok);
     }
 });
 
-// Update player lootbox count
+/**
+ * @openapi
+ * /players/{id}/lootboxes:
+ *   patch:
+ *     summary: Update player lootbox count
+ *     description: Updates the number of lootboxes a player owns
+ *     tags:
+ *       - Players
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Player ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - lootboxCount
+ *             properties:
+ *               lootboxCount:
+ *                 type: integer
+ *                 description: New lootbox count (must be non-negative)
+ *                 example: 15
+ *                 minimum: 0
+ *     responses:
+ *       200:
+ *         description: Lootbox count updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Lootbox count updated"
+ *       400:
+ *         description: Invalid ID or lootbox count
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Constraint violation (e.g., foreign key constraint)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.patch("/players/:id/lootboxes", (req, res) => {
     const unit = new Unit(false);
     const service = new PlayerService(unit);
     const id = req.params.id;
+    let ok = false;
 
     try {
         if (isNullOrWhiteSpace(id) || isNaN(Number(id))) {
@@ -139,23 +397,76 @@ playerRouter.patch("/players/:id/lootboxes", (req, res) => {
 
         const success = service.updatePlayerLootboxCount(Number(id), lootboxCount);
         if (success) {
-            unit.complete(true);
+            ok = true;
             res.status(StatusCodes.OK).json({ message: "Lootbox count updated" });
         } else {
-            unit.complete(false);
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        unit.complete(false);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
+    } finally {
+        unit.complete(ok);
     }
 });
 
-// Delete player
+/**
+ * @openapi
+ * /players/{id}:
+ *   delete:
+ *     summary: Delete a player
+ *     description: Permanently removes a player from the system
+ *     tags:
+ *       - Players
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Player ID to delete
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Player deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *             example:
+ *               message: "Player deleted"
+ *       400:
+ *         description: Invalid ID format
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Cannot delete player with existing references (stoves, listings, etc.)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 playerRouter.delete("/players/:id", (req, res) => {
     const unit = new Unit(false);
     const service = new PlayerService(unit);
     const id = req.params.id;
+    let ok = false;
 
     try {
         if (isNullOrWhiteSpace(id) || isNaN(Number(id))) {
@@ -165,14 +476,18 @@ playerRouter.delete("/players/:id", (req, res) => {
 
         const success = service.deletePlayer(Number(id));
         if (success) {
-            unit.complete(true);
+            ok = true;
             res.status(StatusCodes.OK).json({ message: "Player deleted" });
         } else {
-            unit.complete(false);
             res.status(StatusCodes.NOT_FOUND).json({ error: "Player not found" });
         }
     } catch (err) {
-        unit.complete(false);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        if (isConstraintError(err)) {
+            res.status(StatusCodes.CONFLICT).json({ error: String(err) });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+        }
+    } finally {
+        unit.complete(ok);
     }
 });

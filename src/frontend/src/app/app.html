@@ -1,0 +1,56 @@
+<!-- Sidebar -->
+<nav class="sidebar" [class.open]="sidebarOpen">
+  <a href="/main-menu">Home</a>
+  <a href="#">Marketplace</a>
+  <a href="/lootboxes">Lootboxes</a>
+  <a href="#">Update Log</a>
+  <a href="#">Support</a>
+  <a routerLink="/test">API Test</a>
+</nav>
+
+<!-- Overlay -->
+<div
+  class="overlay"
+  [class.show]="sidebarOpen"
+  (click)="toggleSidebar()">
+</div>
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="menu-btn" (click)="toggleSidebar()">☰</div>
+    <div class="logo" routerLink="/main-menu" style="cursor: pointer;">
+      Ember Exchange
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <span title="Login" (click)="toggleLogin()">👤</span>
+    <!-- Login dropdown -->
+    <div class="dropdown login" [class.show]="loginOpen">
+      <ul class="list">
+        <li class="element">
+          <span class="label">Sign In</span>
+        </li>
+        <li class="element">
+          <span class="label">Sign Up</span>
+        </li>
+        <li class="element" routerLink="/settings" (click)="loginOpen = false">
+          <span class="label">Settings</span>
+        </li>
+
+        <div class="separator"></div>
+
+        <li class="element delete">
+          <span class="label">Logout</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</header>
+
+<!-- Main content -->
+<main class="content">
+  <router-outlet></router-outlet>
+</main>
