@@ -1,1 +1,0 @@
-//TODO: @Ayan in this folder you implement tests for Laurenz's endpoints. Endpoints to test can be found in test.http
