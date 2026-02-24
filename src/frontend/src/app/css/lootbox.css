@@ -1,0 +1,101 @@
+﻿body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #0b1d3a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#app {
+  text-align: center;
+}
+
+#lootbox {
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(135deg, #4fa3ff, #1e88ff);
+  margin: 0 auto 20px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4fa3ff, #1e88ff);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 10;
+}
+
+#roller {
+  width: 620px;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 2px solid #1e88ff;
+  background: #f4f8ff;
+  position: relative;
+}
+
+#items {
+  display: flex;
+  transform: translateX(0px);
+}
+
+.item {
+  min-width: 120px;
+  height: 120px;
+  margin: 10px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #0b1d3a;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#marker {
+  width: 3px;
+  height: 150px;
+  background: #999;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+#popup {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+#popupBox {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}

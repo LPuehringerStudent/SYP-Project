@@ -67,6 +67,9 @@ coverage/
 .env.local
 .env.*.local
 
+# Agent/AI working folder (local only)
+agent/
+
 # macOS
 .DS_Store
 .AppleDouble
