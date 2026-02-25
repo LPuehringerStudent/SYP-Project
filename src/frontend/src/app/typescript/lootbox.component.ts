@@ -20,10 +20,10 @@ export class LootboxComponent implements AfterViewInit {
 
   private pool: LootItem[] = [
     { name: 'Common', color: '#b3e5fc', weight: 50 },
-    { name: 'Uncommon', color: '#81c784', weight: 30 },
-    { name: 'Rare', color: '#ba68c8', weight: 15 },
-    { name: 'Epic', color: '#ffcc80', weight: 4 },
-    { name: 'Legendary', color: '#ff8a80', weight: 1 }
+    { name: 'Rare', color: '#81c784', weight: 30 },
+    { name: 'Epic', color: '#ba68c8', weight: 15 },
+    { name: 'Legendary', color: '#ffcc80', weight: 4.999 },
+    { name: 'Secret', color: '#ff8a80', weight: 0.001 },
   ];
 
   items: LootItem[] = [];
