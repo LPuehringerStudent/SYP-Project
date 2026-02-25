@@ -7,7 +7,7 @@ build/
 
 # Local database files (uncomment to ignore)
 # db/
-# *.db
+*.db
 # *.sqlite
 # *.sqlite3
 
