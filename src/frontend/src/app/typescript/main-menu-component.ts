@@ -1,9 +1,11 @@
-﻿import {Component} from '@angular/core';
+﻿import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-lootbox',
+  selector: 'app-main-menu',
   standalone: true,
+  imports: [RouterModule],
   templateUrl: '../html/main-menu.html',
-  styleUrls: ['../app.css']
+  styleUrls: ['../css/main-menu.css']
 })
 export class MainMenuComponent {}

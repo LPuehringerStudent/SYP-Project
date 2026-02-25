@@ -1,0 +1,80 @@
+﻿<div class="inventory-layout">
+
+  <!-- Sidebar -->
+  <aside class="inventory-sidebar">
+    <h2>Inventory</h2>
+
+    <button
+      class="sidebar-btn"
+      [class.active]="activeTab === 'lootboxes'"
+      (click)="activeTab = 'lootboxes'">
+      Lootboxes
+    </button>
+
+    <button
+      class="sidebar-btn"
+      [class.active]="activeTab === 'items'"
+      (click)="activeTab = 'items'">
+      Items
+    </button>
+  </aside>
+
+  <!-- Main Inventory -->
+  <section class="inventory-main">
+
+    <div class="inventory-header">
+      <h1>{{ activeTab === 'lootboxes' ? 'Lootboxes' : 'Items' }}</h1>
+      <span class="hint">
+    {{ activeTab === 'lootboxes'
+        ? 'Your stored lootboxes'
+        : 'Your collected items' }}
+  </span>
+    </div>
+
+    <!-- Grid -->
+    <div class="inventory-grid">
+
+      <!-- EMPTY: LOOTBOXES -->
+      <div
+        class="empty-state"
+        *ngIf="activeTab === 'lootboxes' && lootboxes.length === 0">
+
+        <div class="empty-icon">🎁</div>
+        <p>No lootboxes yet</p>
+        <span>Open or buy lootboxes to see them here</span>
+      </div>
+
+      <!-- EMPTY: ITEMS -->
+      <div
+        class="empty-state"
+        *ngIf="activeTab === 'items' && items.length === 0">
+
+        <div class="empty-icon">🧩</div>
+        <p>No items yet</p>
+        <span>Open lootboxes to collect items</span>
+      </div>
+
+      <!-- FUTURE: Lootbox slots -->
+      <!--
+      <div
+        class="inventory-slot"
+        *ngFor="let box of lootboxes"
+        *ngIf="activeTab === 'lootboxes'">
+        ...
+      </div>
+      -->
+
+      <!-- FUTURE: Item slots -->
+      <!--
+      <div
+        class="inventory-slot"
+        *ngFor="let item of items"
+        *ngIf="activeTab === 'items'">
+        ...
+      </div>
+      -->
+
+    </div>
+
+  </section>
+</div>

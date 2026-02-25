@@ -20,7 +20,10 @@
   margin: 0 auto 20px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  margin-top: 250px;
 }
+
+
 
 button {
   padding: 12px 28px;
