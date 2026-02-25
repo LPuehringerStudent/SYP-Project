@@ -1,11 +1,12 @@
-﻿export interface MockStatement<T = any> {
+﻿
+export interface MockStatement<T = any> {
     all: jest.Mock<T[], []>;
     get: jest.Mock<T | undefined, []>;
     run: jest.Mock<{ changes: number; lastInsertRowid: number | bigint }, []>;
 }
 
 export class MockUnit {
-    prepare = jest.fn();
+    prepare = jest.fn<any, [string, any?]>();
 
     createMockStatement<T>(overrides: Partial<MockStatement<T>> = {}): MockStatement<T> {
         return {
@@ -17,4 +18,5 @@ export class MockUnit {
     }
 }
 
-export const createMockUnit = () => new MockUnit();
+// Factory function
+export const createMockUnit = (): MockUnit => new MockUnit();
