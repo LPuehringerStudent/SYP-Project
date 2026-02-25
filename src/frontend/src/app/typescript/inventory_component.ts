@@ -1,5 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {NgIf} from '@angular/common';
 
 interface InventoryLootbox {
   count: number;
@@ -11,6 +12,9 @@ interface InventoryLootbox {
   selector: 'app-inventory',
   standalone: true,
   templateUrl: '../html/inventory.html',
+  imports: [
+    NgIf
+  ],
   styleUrls: ['../css/inventory.css']
 })
 export class InventoryComponent {
