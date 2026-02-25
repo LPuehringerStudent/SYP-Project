@@ -38,6 +38,8 @@ describe('Player API Endpoints', () => {
             CREATE TABLE IF NOT EXISTS Player (
                 playerId INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
                 coins INTEGER NOT NULL DEFAULT 0,
                 lootboxCount INTEGER NOT NULL DEFAULT 0,
                 isAdmin INTEGER NOT NULL DEFAULT 0,
@@ -47,8 +49,8 @@ describe('Player API Endpoints', () => {
         
         // Insert admin test data
         db.exec(`
-            INSERT INTO Player (playerId, username, coins, lootboxCount, isAdmin, joinedAt)
-            VALUES (1, 'admin', 999999, 100, 1, datetime('now'))
+            INSERT INTO Player (playerId, username, password, email, coins, lootboxCount, isAdmin, joinedAt)
+            VALUES (1, 'admin', 'admin123', 'admin@emberexchange.com', 999999, 100, 1, datetime('now'))
         `);
         
         db.close();
@@ -127,6 +129,8 @@ describe('Player API Endpoints', () => {
         it('should create a new player with valid data', async () => {
             const newPlayer = {
                 username: 'testplayer',
+                password: 'testpass123',
+                email: 'testplayer@example.com',
                 coins: 500,
                 lootboxCount: 5
             };
@@ -143,7 +147,9 @@ describe('Player API Endpoints', () => {
 
         it('should create a player with default values when optional fields omitted', async () => {
             const newPlayer = {
-                username: 'defaultplayer'
+                username: 'defaultplayer',
+                password: 'defaultpass',
+                email: 'default@example.com'
             };
 
             const response = await request(app)
@@ -158,6 +164,8 @@ describe('Player API Endpoints', () => {
         it('should return 409 for duplicate username', async () => {
             const duplicatePlayer = {
                 username: 'admin',
+                password: 'somepass',
+                email: 'unique@example.com',
                 coins: 1000
             };
 
@@ -170,8 +178,27 @@ describe('Player API Endpoints', () => {
             expect(response.body.error.toLowerCase()).toContain('already exists');
         });
 
+        it('should return 409 for duplicate email', async () => {
+            const duplicateEmailPlayer = {
+                username: 'uniqueusername',
+                password: 'somepass',
+                email: 'admin@emberexchange.com',
+                coins: 1000
+            };
+
+            const response = await request(app)
+                .post('/api/players')
+                .send(duplicateEmailPlayer)
+                .expect(409);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error.toLowerCase()).toContain('email');
+        });
+
         it('should return 400 when username is missing', async () => {
             const invalidPlayer = {
+                password: 'somepass',
+                email: 'test@example.com',
                 coins: 1000
             };
 
@@ -184,9 +211,60 @@ describe('Player API Endpoints', () => {
             expect(response.body.error).toContain('Username is required');
         });
 
+        it('should return 400 when password is missing', async () => {
+            const invalidPlayer = {
+                username: 'nopassworduser',
+                email: 'test@example.com',
+                coins: 1000
+            };
+
+            const response = await request(app)
+                .post('/api/players')
+                .send(invalidPlayer)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Password is required');
+        });
+
+        it('should return 400 when email is missing', async () => {
+            const invalidPlayer = {
+                username: 'noemailuser',
+                password: 'somepass',
+                coins: 1000
+            };
+
+            const response = await request(app)
+                .post('/api/players')
+                .send(invalidPlayer)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Email is required');
+        });
+
+        it('should return 400 when email format is invalid', async () => {
+            const invalidPlayer = {
+                username: 'bademailuser',
+                password: 'somepass',
+                email: 'not-an-email',
+                coins: 1000
+            };
+
+            const response = await request(app)
+                .post('/api/players')
+                .send(invalidPlayer)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Invalid email format');
+        });
+
         it('should return 400 when username is empty string', async () => {
             const invalidPlayer = {
                 username: '',
+                password: 'somepass',
+                email: 'test@example.com',
                 coins: 1000
             };
 
@@ -201,6 +279,8 @@ describe('Player API Endpoints', () => {
         it('should return 400 when username is whitespace only', async () => {
             const invalidPlayer = {
                 username: '   ',
+                password: 'somepass',
+                email: 'test@example.com',
                 coins: 1000
             };
 
@@ -380,7 +460,7 @@ describe('Player API Endpoints', () => {
             // First create a test player using the API
             const createResponse = await request(app)
                 .post('/api/players')
-                .send({ username: 'deletetest', coins: 1000, lootboxCount: 10 });
+                .send({ username: 'deletetest', password: 'deletepass', email: 'delete@example.com', coins: 1000, lootboxCount: 10 });
             
             const playerId = createResponse.body.playerId;
 

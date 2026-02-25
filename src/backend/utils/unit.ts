@@ -124,20 +124,20 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
 
     function insertPlayers(): void {
         const players = [
-            { username: "admin", coins: 999999, lootboxCount: 100, isAdmin: 1 },
-            { username: "player1", coins: 5000, lootboxCount: 10, isAdmin: 0 },
-            { username: "player2", coins: 3500, lootboxCount: 5, isAdmin: 0 },
-            { username: "trader_joe", coins: 10000, lootboxCount: 20, isAdmin: 0 },
-            { username: "collector", coins: 2500, lootboxCount: 3, isAdmin: 0 }
+            { username: "admin", password: "admin123", email: "admin@emberexchange.com", coins: 999999, lootboxCount: 100, isAdmin: 1 },
+            { username: "player1", password: "pass123", email: "player1@example.com", coins: 5000, lootboxCount: 10, isAdmin: 0 },
+            { username: "player2", password: "pass456", email: "player2@example.com", coins: 3500, lootboxCount: 5, isAdmin: 0 },
+            { username: "trader_joe", password: "trade789", email: "trader@example.com", coins: 10000, lootboxCount: 20, isAdmin: 0 },
+            { username: "collector", password: "collect000", email: "collector@example.com", coins: 2500, lootboxCount: 3, isAdmin: 0 }
         ];
         
         for (const player of players) {
             const stmt = unit.prepare<
                 unknown,
-                { username: string; coins: number; lootboxCount: number; isAdmin: number; joinedAt: string }
+                { username: string; password: string; email: string; coins: number; lootboxCount: number; isAdmin: number; joinedAt: string }
             >(
-                `insert into Player (username, coins, lootboxCount, isAdmin, joinedAt) 
-                 values (@username, @coins, @lootboxCount, @isAdmin, @joinedAt)`,
+                `insert into Player (username, password, email, coins, lootboxCount, isAdmin, joinedAt) 
+                 values (@username, @password, @email, @coins, @lootboxCount, @isAdmin, @joinedAt)`,
                 { ...player, joinedAt: new Date().toISOString() }
             );
             stmt.run();
@@ -388,6 +388,8 @@ class DB {
             create table if not exists Player (
                 playerId integer primary key autoincrement,
                 username text not null unique,
+                password text not null,
+                email text not null unique,
                 coins integer not null default 0,
                 lootboxCount integer not null default 0,
                 isAdmin integer not null default 0,

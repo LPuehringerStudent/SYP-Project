@@ -38,6 +38,8 @@ describe("Stove API Endpoints", () => {
             CREATE TABLE IF NOT EXISTS Player (
                 playerId INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
                 coins INTEGER NOT NULL DEFAULT 0,
                 lootboxCount INTEGER NOT NULL DEFAULT 0,
                 isAdmin INTEGER NOT NULL DEFAULT 0,
@@ -66,10 +68,10 @@ describe("Stove API Endpoints", () => {
 
         // Insert test data
         db.exec(`
-            INSERT INTO Player (playerId, username, coins, lootboxCount, isAdmin, joinedAt) VALUES 
-            (1, 'player1', 5000, 10, 0, datetime('now')),
-            (2, 'player2', 3000, 5, 0, datetime('now')),
-            (3, 'player3', 10000, 0, 0, datetime('now'))
+            INSERT INTO Player (playerId, username, password, email, coins, lootboxCount, isAdmin, joinedAt) VALUES 
+            (1, 'player1', 'pass1', 'player1@test.com', 5000, 10, 0, datetime('now')),
+            (2, 'player2', 'pass2', 'player2@test.com', 3000, 5, 0, datetime('now')),
+            (3, 'player3', 'pass3', 'player3@test.com', 10000, 0, 0, datetime('now'))
         `);
 
         db.exec(`
