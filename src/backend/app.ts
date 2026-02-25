@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
-import { Unit, ensureSampleDataInserted } from "./utils/unit";
+import {Unit, ensureSampleDataInserted, resetDatabase} from "./utils/unit";
 import { playerRouter } from "./routers/player-router";
 import { lootboxRouter } from "./routers/lootbox-router";
 import { stoveTypeRouter } from "./routers/stove-type-router";
@@ -12,6 +12,7 @@ import { priceHistoryRouter } from "./routers/price-history-router";
 import { listingRouter } from "./routers/listing-router";
 import { tradeRouter } from "./routers/trade-router";
 import { swaggerSpec } from "./swagger";
+import Database from "better-sqlite3";
 
 export const app = express();
 const PORT = process.env.PORT || 3000;
@@ -71,14 +72,16 @@ function initDb(): void {
     let unit: Unit | null = null;
     try {
         unit = new Unit(false);
-        const result = ensureSampleDataInserted(unit);
-        if (result === "inserted") {
-            console.log("Sample data inserted");
-            unit.complete(true);
-        } else {
-            console.log("Sample data skipped (already exists)");
-            unit.complete(false);
-        }
+        
+        // Reset database to default state (drop and recreate tables)
+        const connection = unit.getConnection();
+        resetDatabase(connection);
+        
+        // Insert sample data fresh
+        ensureSampleDataInserted(unit);
+        console.log("✅ Database reset and sample data inserted");
+        
+        unit.complete(true);
     } catch (error) {
         console.error("Database initialization failed:", error);
         if (unit) {

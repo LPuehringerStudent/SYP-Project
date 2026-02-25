@@ -21,12 +21,25 @@ const options: swaggerJsdoc.Options = {
                     properties: {
                         playerId: { type: "integer", description: "Unique player ID" },
                         username: { type: "string", description: "Player username" },
+                        password: { type: "string", description: "Player password hash" },
+                        email: { type: "string", format: "email", description: "Player email address" },
                         coins: { type: "integer", description: "Player coin balance" },
                         lootboxCount: { type: "integer", description: "Number of lootboxes owned" },
                         isAdmin: { type: "integer", description: "Admin flag (0 = false, 1 = true)" },
                         joinedAt: { type: "string", format: "date-time", description: "Join timestamp" },
                     },
-                    required: ["playerId", "username", "coins", "lootboxCount", "isAdmin", "joinedAt"],
+                    required: ["playerId", "username", "password", "email", "coins", "lootboxCount", "isAdmin", "joinedAt"],
+                },
+                PlayerCreate: {
+                    type: "object",
+                    properties: {
+                        username: { type: "string", description: "Unique username for the player" },
+                        password: { type: "string", description: "Player password (should be pre-hashed)" },
+                        email: { type: "string", format: "email", description: "Unique email address for the player" },
+                        coins: { type: "integer", description: "Initial coin amount (default 1000)" },
+                        lootboxCount: { type: "integer", description: "Initial lootbox count (default 10)" },
+                    },
+                    required: ["username", "password", "email"],
                 },
                 LootboxType: {
                     type: "object",
@@ -44,13 +57,22 @@ const options: swaggerJsdoc.Options = {
                 Lootbox: {
                     type: "object",
                     properties: {
-                        lootboxId: { type: "integer", description: "Unique lootbox ID" },
+                        lootboxId: { type: "integer", description: "Unique lootbox ID (auto-increment)" },
                         lootboxTypeId: { type: "integer", description: "Type of lootbox" },
                         playerId: { type: "integer", description: "Player who opened it" },
                         openedAt: { type: "string", format: "date-time", description: "When the lootbox was opened" },
                         acquiredHow: { type: "string", enum: ["free", "purchase", "reward"], description: "How it was acquired" },
                     },
                     required: ["lootboxId", "lootboxTypeId", "playerId", "openedAt", "acquiredHow"],
+                },
+                LootboxCreate: {
+                    type: "object",
+                    properties: {
+                        lootboxTypeId: { type: "integer", description: "Type of lootbox" },
+                        playerId: { type: "integer", description: "Player who opened it" },
+                        acquiredHow: { type: "string", enum: ["free", "purchase", "reward"], description: "How it was acquired" },
+                    },
+                    required: ["lootboxTypeId", "playerId", "acquiredHow"],
                 },
                 LootboxDrop: {
                     type: "object",
@@ -158,6 +180,7 @@ const options: swaggerJsdoc.Options = {
                         playerId: { type: "integer", description: "Created player ID" },
                         username: { type: "string", description: "Player username" },
                     },
+                    required: ["playerId", "username"],
                 },
                 CreateListingResponse: {
                     type: "object",
@@ -172,6 +195,14 @@ const options: swaggerJsdoc.Options = {
                         tradeId: { type: "integer", description: "Created trade ID" },
                         message: { type: "string", description: "Success message" },
                     },
+                },
+                CreateLootboxResponse: {
+                    type: "object",
+                    properties: {
+                        lootboxId: { type: "integer", description: "Created lootbox ID (auto-increment)" },
+                        message: { type: "string", description: "Success message" },
+                    },
+                    required: ["lootboxId", "message"],
                 },
                 TotalWeightResponse: {
                     type: "object",
