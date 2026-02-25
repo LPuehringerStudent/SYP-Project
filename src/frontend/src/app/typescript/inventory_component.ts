@@ -21,9 +21,7 @@ export class InventoryComponent {
   activeTab: 'lootboxes' | 'items' = 'lootboxes';
 
   // dummy data
-  lootboxes = [
-    {}
-  ];
+  lootboxes: any[] = [];
 
   items: any[] = [];
 
