@@ -1,0 +1,10 @@
+The serviceTests/ folder should be populated with direct service unit tests that:
+
+  1. Test service methods in isolation (without HTTP layer)
+  2. Test database transaction handling
+  3. Test edge cases and error conditions
+  4. Test the Unit class database utilities
+
+  This would improve coverage and catch issues at the business logic level, not just at the API level.
+
+//TODO @Ayan Implement tests

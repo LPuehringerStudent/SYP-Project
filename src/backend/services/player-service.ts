@@ -32,19 +32,21 @@ export class PlayerService extends ServiceBase {
     }
 
     /**
-     * Creates a new player with the specified username and optional initial values.
+     * Creates a new player with the specified username, password, email and optional initial values.
      * New players are created as non-admins with the current timestamp as join date.
      * @param username - The unique username for the player.
+     * @param password - The password for the player (should be pre-hashed).
+     * @param email - The unique email address for the player.
      * @param coins - Initial coin amount (default: 1000).
      * @param lootboxCount - Initial lootbox count (default: 10).
      * @returns A tuple where the first element indicates success,
      *          and the second element is the new player's ID (if successful).
      */
-    createPlayer(username: string, coins: number = 1000, lootboxCount: number = 10): [boolean, number] {
+    createPlayer(username: string, password: string, email: string, coins: number = 1000, lootboxCount: number = 10): [boolean, number] {
         const stmt = this.unit.prepare<PlayerRow>(
-            `INSERT INTO Player (username, coins, lootboxCount, isAdmin, joinedAt) 
-             VALUES (@username, @coins, @lootboxCount, 0, datetime('now'))`,
-            { username, coins, lootboxCount }
+            `INSERT INTO Player (username, password, email, coins, lootboxCount, isAdmin, joinedAt) 
+             VALUES (@username, @password, @email, @coins, @lootboxCount, 0, datetime('now'))`,
+            { username, password, email, coins, lootboxCount }
         );
         return this.executeStmt(stmt);
     }
@@ -102,6 +104,19 @@ export class PlayerService extends ServiceBase {
         const stmt = this.unit.prepare<PlayerRow>(
             "SELECT * FROM Player WHERE username = @username",
             { username }
+        );
+        return stmt.get() ?? null;
+    }
+
+    /**
+     * Retrieves a player by their email address.
+     * @param email - The email to search for.
+     * @returns The PlayerRow object if found, otherwise null.
+     */
+    getPlayerByEmail(email: string): PlayerRow | null {
+        const stmt = this.unit.prepare<PlayerRow>(
+            "SELECT * FROM Player WHERE email = @email",
+            { email }
         );
         return stmt.get() ?? null;
     }

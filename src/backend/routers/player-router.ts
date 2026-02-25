@@ -122,7 +122,7 @@ playerRouter.get("/players/:id", (req, res) => {
  * /players:
  *   post:
  *     summary: Create a new player
- *     description: Creates a new player with the given username and optional initial values
+ *     description: Creates a new player with the given username, password, email and optional initial values
  *     tags:
  *       - Players
  *     requestBody:
@@ -133,11 +133,22 @@ playerRouter.get("/players/:id", (req, res) => {
  *             type: object
  *             required:
  *               - username
+ *               - password
+ *               - email
  *             properties:
  *               username:
  *                 type: string
  *                 description: Unique username for the player
  *                 example: "player123"
+ *               password:
+ *                 type: string
+ *                 description: Player password (should be pre-hashed)
+ *                 example: "hashedpassword123"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Unique email address for the player
+ *                 example: "player@example.com"
  *               coins:
  *                 type: integer
  *                 description: Initial coin amount (default 1000)
@@ -154,13 +165,13 @@ playerRouter.get("/players/:id", (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/CreatePlayerResponse'
  *       400:
- *         description: Username is required
+ *         description: Username, password, or email is required or invalid
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       409:
- *         description: Username already exists
+ *         description: Username or email already exists
  *         content:
  *           application/json:
  *             schema:
@@ -178,22 +189,49 @@ playerRouter.post("/players", (req, res) => {
     let ok = false;
 
     try {
-        const { username, coins, lootboxCount } = req.body;
+        const { username, password, email, coins, lootboxCount } = req.body;
 
+        // Validate required fields
         if (isNullOrWhiteSpace(username)) {
             res.status(StatusCodes.BAD_REQUEST).json({ error: "Username is required" });
             return;
         }
 
+        if (isNullOrWhiteSpace(password)) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "Password is required" });
+            return;
+        }
+
+        if (isNullOrWhiteSpace(email)) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "Email is required" });
+            return;
+        }
+
+        // Basic email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid email format" });
+            return;
+        }
+
         // Check if username already exists
-        const existing = service.getPlayerByUsername(username);
-        if (existing !== null) {
+        const existingUsername = service.getPlayerByUsername(username);
+        if (existingUsername !== null) {
             res.status(StatusCodes.CONFLICT).json({ error: "Username already exists" });
+            return;
+        }
+
+        // Check if email already exists
+        const existingEmail = service.getPlayerByEmail(email);
+        if (existingEmail !== null) {
+            res.status(StatusCodes.CONFLICT).json({ error: "Email already exists" });
             return;
         }
 
         const [success, id] = service.createPlayer(
             username,
+            password,
+            email,
             coins ?? 1000,
             lootboxCount ?? 10
         );

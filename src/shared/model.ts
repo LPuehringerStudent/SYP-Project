@@ -9,6 +9,8 @@ export enum Rarity {
 // Player
 export interface Player {
     username: string;
+    password: string;
+    email: string;
     coins: number;
     lootboxCount: number;
     isAdmin: boolean;

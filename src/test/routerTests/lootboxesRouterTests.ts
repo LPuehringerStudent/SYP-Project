@@ -32,6 +32,8 @@ describe('Lootbox API Endpoints', () => {
             CREATE TABLE IF NOT EXISTS Player (
                 playerId INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
                 coins INTEGER NOT NULL DEFAULT 0,
                 lootboxCount INTEGER NOT NULL DEFAULT 0,
                 isAdmin INTEGER NOT NULL DEFAULT 0,
@@ -89,9 +91,9 @@ describe('Lootbox API Endpoints', () => {
         `);
 
         db.exec(`
-            INSERT INTO Player (playerId, username, coins, lootboxCount, isAdmin, joinedAt) VALUES 
-            (1, 'player1', 5000, 10, 0, datetime('now')),
-            (2, 'player2', 3000, 5, 0, datetime('now'))
+            INSERT INTO Player (playerId, username, password, email, coins, lootboxCount, isAdmin, joinedAt) VALUES 
+            (1, 'player1', 'password1', 'player1@test.com', 5000, 10, 0, datetime('now')),
+            (2, 'player2', 'password2', 'player2@test.com', 3000, 5, 0, datetime('now'))
         `);
 
         db.exec(`
@@ -200,8 +202,8 @@ describe('Lootbox API Endpoints', () => {
 
         it('should return empty array for player with no lootboxes', async () => {
             const db = new Database(dbPath);
-            db.exec(`INSERT INTO Player (playerId, username, coins, lootboxCount, isAdmin, joinedAt) 
-                     VALUES (99, 'nolootboxes', 0, 0, 0, datetime('now'))`);
+            db.exec(`INSERT INTO Player (playerId, username, password, email, coins, lootboxCount, isAdmin, joinedAt) 
+                     VALUES (99, 'nolootboxes', 'password99', 'nolootboxes@test.com', 0, 0, 0, datetime('now'))`);
             db.close();
 
             const response = await request(app)
