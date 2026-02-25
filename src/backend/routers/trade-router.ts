@@ -50,6 +50,89 @@ tradeRouter.get("/trades", (_req, res) => {
 
 /**
  * @openapi
+ * /trades/recent:
+ *   get:
+ *     summary: Get recent trades
+ *     description: Returns the most recent trades
+ *     tags:
+ *       - Trades
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         description: Maximum number of records (default 10)
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Recent trades
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Trade'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+tradeRouter.get("/trades/recent", (req, res) => {
+    const unit = new Unit(true);
+    const service = new TradeService(unit);
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    try {
+        const response = service.getRecentTrades(limit);
+        res.status(StatusCodes.OK).json(response);
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+    } finally {
+        unit.complete();
+    }
+});
+
+/**
+ * @openapi
+ * /trades/count:
+ *   get:
+ *     summary: Count total trades
+ *     description: Returns the total number of trades in the system
+ *     tags:
+ *       - Trades
+ *     responses:
+ *       200:
+ *         description: Total trade count
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CountResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+tradeRouter.get("/trades/count", (_req, res) => {
+    const unit = new Unit(true);
+    const service = new TradeService(unit);
+
+    try {
+        const count = service.countTrades();
+        res.status(StatusCodes.OK).json({ count });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
+    } finally {
+        unit.complete();
+    }
+});
+
+/**
+ * @openapi
  * /trades/{id}:
  *   get:
  *     summary: Get trade by ID
@@ -367,53 +450,6 @@ tradeRouter.post("/trades", (req, res) => {
 
 /**
  * @openapi
- * /trades/recent:
- *   get:
- *     summary: Get recent trades
- *     description: Returns the most recent trades
- *     tags:
- *       - Trades
- *     parameters:
- *       - name: limit
- *         in: query
- *         required: false
- *         description: Maximum number of records (default 10)
- *         schema:
- *           type: integer
- *           default: 10
- *     responses:
- *       200:
- *         description: Recent trades
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Trade'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-tradeRouter.get("/trades/recent", (req, res) => {
-    const unit = new Unit(true);
-    const service = new TradeService(unit);
-    const limit = parseInt(req.query.limit as string) || 10;
-
-    try {
-        const response = service.getRecentTrades(limit);
-        res.status(StatusCodes.OK).json(response);
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
-    } finally {
-        unit.complete();
-    }
-});
-
-/**
- * @openapi
  * /trades/{id}:
  *   delete:
  *     summary: Delete a trade
@@ -478,42 +514,6 @@ tradeRouter.delete("/trades/:id", (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
     } finally {
         unit.complete(ok);
-    }
-});
-
-/**
- * @openapi
- * /trades/count:
- *   get:
- *     summary: Count total trades
- *     description: Returns the total number of trades in the system
- *     tags:
- *       - Trades
- *     responses:
- *       200:
- *         description: Total trade count
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/CountResponse'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-tradeRouter.get("/trades/count", (_req, res) => {
-    const unit = new Unit(true);
-    const service = new TradeService(unit);
-
-    try {
-        const count = service.countTrades();
-        res.status(StatusCodes.OK).json({ count });
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: String(err) });
-    } finally {
-        unit.complete();
     }
 });
 

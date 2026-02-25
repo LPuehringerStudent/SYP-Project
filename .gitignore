@@ -68,7 +68,7 @@ coverage/
 .env.*.local
 
 # Agent/AI working folder (local only)
-agent/
+Agent/
 
 # macOS
 .DS_Store
