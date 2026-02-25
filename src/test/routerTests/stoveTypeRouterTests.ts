@@ -218,7 +218,7 @@ describe("StoveType API Endpoints", () => {
             expect(response.body).toHaveProperty("message", "Stove type created successfully");
         });
 
-        it("should return 400 for duplicate name", async () => {
+        it("should return 409 for duplicate name", async () => {
             const duplicateType = {
                 name: "Standard Stove",
                 imageUrl: "/images/stoves/standard.png",
@@ -229,7 +229,7 @@ describe("StoveType API Endpoints", () => {
             const response = await request(app)
                 .post("/api/stove-types")
                 .send(duplicateType)
-                .expect(400);
+                .expect(409);
 
             expect(response.body).toHaveProperty("error");
         });
