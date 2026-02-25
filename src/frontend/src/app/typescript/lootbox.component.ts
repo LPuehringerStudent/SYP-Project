@@ -1,5 +1,6 @@
 ﻿import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {createLootbox, LootboxDrop} from '../fetchers/lootbox.fetcher';
 
 interface LootItem {
   name: string;
@@ -58,6 +59,7 @@ export class LootboxComponent implements AfterViewInit {
 
   openBox(): void {
     this.buildStrip();
+
     this.showOverlay = true;
     this.cdr.detectChanges();
 
