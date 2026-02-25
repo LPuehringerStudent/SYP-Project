@@ -1,11 +1,11 @@
 <!-- Sidebar -->
 <nav class="sidebar" [class.open]="sidebarOpen">
-  <a href="/">Home</a>
-  <a href="#">Marketplace</a>
-  <a href="/lootboxes">Lootboxes</a>
-  <a href="#">Update Log</a>
-  <a href="#">Support</a>
-  <a routerLink="/test">API Test</a>
+  <a routerLink="/" (click)="sidebarOpen = false">Home</a>
+  <a routerLink="/marketplace" (click)="sidebarOpen = false">Marketplace</a>
+  <a routerLink="/lootboxes" (click)="sidebarOpen = false">Lootboxes</a>
+  <a routerLink="/update-log" (click)="sidebarOpen = false">Update Log</a>
+  <a routerLink="/support" (click)="sidebarOpen = false">Support</a>
+  <a routerLink="/test" (click)="sidebarOpen = false">API Test</a>
 </nav>
 
 <!-- Overlay -->
@@ -25,15 +25,15 @@
   </div>
 
   <div class="topbar-right">
-    <span title="Inventory" routerLink="/inventory">🎒</span>
-    <span title="Login" (click)="toggleLogin()">👤</span>
+    <span title="Inventory" routerLink="/inventory" style="cursor: pointer;">🎒</span>
+    <span title="Login" (click)="toggleLogin()" style="cursor: pointer;">👤</span>
     <!-- Login dropdown -->
     <div class="dropdown login" [class.show]="loginOpen">
       <ul class="list">
-        <li class="element">
+        <li class="element" routerLink="/login" (click)="loginOpen = false">
           <span class="label">Sign In</span>
         </li>
-        <li class="element">
+        <li class="element" routerLink="/signup" (click)="loginOpen = false">
           <span class="label">Sign Up</span>
         </li>
         <li class="element" routerLink="/settings" (click)="loginOpen = false">
@@ -42,7 +42,7 @@
 
         <div class="separator"></div>
 
-        <li class="element delete">
+        <li class="element delete" routerLink="/" (click)="loginOpen = false">
           <span class="label">Logout</span>
         </li>
       </ul>
