@@ -31,7 +31,6 @@ export class LootboxComponent implements AfterViewInit {
   showOverlay = false;
   showPopup = false;
   resultText = '';
-  private transitionHandler: ((this: HTMLElement, ev: TransitionEvent) => any) | null = null;
 
   constructor(private cdr: ChangeDetectorRef) {}
 

@@ -19,11 +19,6 @@ export class MainComponent {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
-  toggleSettings() {
-    this.settingsOpen = !this.settingsOpen;
-    this.loginOpen = false;
-  }
-
   toggleLogin() {
     this.loginOpen = !this.loginOpen;
     this.settingsOpen = false;
