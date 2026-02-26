@@ -20,7 +20,7 @@ export class LootBoxHelper {
     finalItem: LootItem | null = null;
     constructor(private cdr: ChangeDetectorRef) {}
 
-    public weightedPick(): LootItem {
+    private weightedPick(): LootItem {
         const sum = this.pool.reduce((a, b) => a + b.weight, 0);
         let r = Math.random() * sum;
         for (const p of this.pool) {

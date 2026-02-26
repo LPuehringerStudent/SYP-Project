@@ -13,24 +13,11 @@ import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
 
 export class LootboxComponent implements AfterViewInit {
   @ViewChild('itemsContainer') itemsElement!: ElementRef<HTMLElement>;
-/*
-  private pool: LootItem[] = [
-    { name: 'Common', color: '#b3e5fc', weight: 50 },
-    { name: 'Uncommon', color: '#81c784', weight: 30 },
-    { name: 'Rare', color: '#ba68c8', weight: 15 },
-    { name: 'Epic', color: '#ffcc80', weight: 4 },
-    { name: 'Legendary', color: '#ff8a80', weight: 1 }
-  ];
-
-  items: LootItem[] = [];
-  finalItem: LootItem | null = null;
-*/
 
   resultText = '';
   showPopup = false;
   showOverlay = false;
   items: LootItem[] = [];
-  private transitionHandler: ((this: HTMLElement, ev: TransitionEvent) => any) | null = null;
 
   private lootBoxHelper: LootBoxHelper;
   constructor(private cdr: ChangeDetectorRef) {
@@ -39,24 +26,6 @@ export class LootboxComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
   }
-/*
-  private weightedPick(): LootItem {
-    const sum = this.pool.reduce((a, b) => a + b.weight, 0);
-    let r = Math.random() * sum;
-    for (const p of this.pool) {
-      if ((r -= p.weight) <= 0) return p;
-    }
-    return this.pool[0];
-  }*/
-
- /* private buildStrip(): void {
-    this.items = [];
-    for (let i = 0; i < 60; i++) {
-      this.items.push(this.weightedPick());
-    }
-    this.finalItem = this.weightedPick();
-    this.items[40] = this.finalItem;
-  }*/
 
   openBox(): void {
     this.lootBoxHelper.buildStrip();
