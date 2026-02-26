@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 // Player fetcher
 import {
@@ -53,252 +54,676 @@ import {
   getRecentTrades, deleteTrade, countTrades, countTradesByBuyer, Trade
 } from '../fetchers/trade.fetcher';
 
+interface TestResult {
+  timestamp: string;
+  endpoint: string;
+  success: boolean;
+  data?: unknown;
+  error?: string;
+  duration: number;
+}
+
+interface ApiCategory {
+  name: string;
+  icon: string;
+  expanded: boolean;
+  endpoints: ApiEndpoint[];
+}
+
+interface ApiEndpoint {
+  name: string;
+  method: () => Promise<unknown>;
+  label: string;
+  description?: string;
+}
+
 @Component({
   selector: 'app-test-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
-    <div style="padding: 20px; font-family: monospace;">
-      <h1>API Test Page</h1>
-      <p>Open browser console to see results</p>
-      
-      <div style="margin-bottom: 30px;">
-        <h2>Player</h2>
-        <button (click)="testGetAllPlayers()">getAllPlayers()</button>
-        <button (click)="testGetPlayerById()">getPlayerById(1)</button>
-        <button (click)="testCreatePlayer()">createPlayer('test')</button>
-        <button (click)="testUpdatePlayerCoins()">updatePlayerCoins(1, 999)</button>
-        <button (click)="testUpdatePlayerLootboxCount()">updatePlayerLootboxCount(1, 5)</button>
-        <button (click)="testDeletePlayer()">deletePlayer(999)</button>
-      </div>
+    <div class="test-page">
+      <header class="page-header">
+        <h1>🔧 API Test Console</h1>
+        <p class="subtitle">Test all backend endpoints with live feedback</p>
+      </header>
 
-      <div style="margin-bottom: 30px;">
-        <h2>Lootbox</h2>
-        <button (click)="testGetAllLootboxes()">getAllLootboxes()</button>
-        <button (click)="testGetLootboxById()">getLootboxById(1)</button>
-        <button (click)="testGetLootboxesByPlayerId()">getLootboxesByPlayerId(1)</button>
-        <button (click)="testCreateLootbox()">createLootbox(1, 1, 'free')</button>
-        <button (click)="testDeleteLootbox()">deleteLootbox(999)</button>
-      </div>
+      <div class="main-layout">
+        <!-- Sidebar with categories -->
+        <aside class="sidebar">
+          <div class="search-box">
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              placeholder="Search endpoints..."
+              class="search-input">
+          </div>
 
-      <div style="margin-bottom: 30px;">
-        <h2>LootboxType</h2>
-        <button (click)="testGetAllLootboxTypes()">getAllLootboxTypes()</button>
-        <button (click)="testGetAvailableLootboxTypes()">getAvailableLootboxTypes()</button>
-        <button (click)="testGetLootboxTypeById()">getLootboxTypeById(1)</button>
-      </div>
+          <div class="category-list">
+            <div 
+              *ngFor="let category of filteredCategories" 
+              class="category-item"
+              [class.expanded]="category.expanded">
+              <button class="category-header" (click)="toggleCategory(category)">
+                <span class="category-icon">{{ category.icon }}</span>
+                <span class="category-name">{{ category.name }}</span>
+                <span class="toggle-icon">{{ category.expanded ? '▼' : '▶' }}</span>
+              </button>
+              
+              <div class="endpoint-list" *ngIf="category.expanded">
+                <button
+                  *ngFor="let endpoint of category.endpoints"
+                  class="endpoint-btn"
+                  [class.running]="runningEndpoint === endpoint.label"
+                  (click)="runTest(endpoint)"
+                  [title]="endpoint.description">
+                  <span class="btn-text">{{ endpoint.name }}</span>
+                  <span class="spinner" *ngIf="runningEndpoint === endpoint.label">⟳</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-      <div style="margin-bottom: 30px;">
-        <h2>LootboxDrop</h2>
-        <button (click)="testGetDropsByLootboxId()">getDropsByLootboxId(1)</button>
-        <button (click)="testCreateLootboxDrop()">createLootboxDrop(1, 1)</button>
-      </div>
+        <!-- Results panel -->
+        <main class="results-panel">
+          <div class="panel-header">
+            <h2>Response</h2>
+            <div class="actions">
+              <button class="action-btn" (click)="clearResults()" [disabled]="results.length === 0">
+                Clear All
+              </button>
+              <button class="action-btn" (click)="copyLastResult()" [disabled]="!lastResult">
+                Copy Last
+              </button>
+            </div>
+          </div>
 
-      <div style="margin-bottom: 30px;">
-        <h2>StoveType</h2>
-        <button (click)="testGetAllStoveTypes()">getAllStoveTypes()</button>
-        <button (click)="testGetStoveTypeById()">getStoveTypeById(1)</button>
-        <button (click)="testGetStoveTypesByRarity()">getStoveTypesByRarity('common')</button>
-        <button (click)="testCreateStoveType()">createStoveType('Test', '/img.png', 'common', 10)</button>
-        <button (click)="testUpdateStoveTypeWeight()">updateStoveTypeWeight(1, 20)</button>
-        <button (click)="testUpdateStoveTypeImage()">updateStoveTypeImage(1, '/new.png')</button>
-        <button (click)="testDeleteStoveType()">deleteStoveType(999)</button>
-        <button (click)="testGetTotalLootboxWeight()">getTotalLootboxWeight()</button>
-      </div>
+          <div class="results-list" *ngIf="results.length > 0">
+            <div 
+              *ngFor="let result of results; let i = index" 
+              class="result-card"
+              [class.success]="result.success"
+              [class.error]="!result.success">
+              <div class="result-header">
+                <span class="badge" [class.success]="result.success" [class.error]="!result.success">
+                  {{ result.success ? '✓' : '✗' }}
+                </span>
+                <span class="endpoint-name">{{ result.endpoint }}</span>
+                <span class="timestamp">{{ result.timestamp }}</span>
+                <span class="duration" [class.fast]="result.duration < 100" [class.slow]="result.duration > 500">
+                  {{ result.duration }}ms
+                </span>
+                <button class="delete-btn" (click)="removeResult(i)">×</button>
+              </div>
+              <div class="result-body">
+                <pre *ngIf="result.success">{{ result.data | json }}</pre>
+                <pre *ngIf="!result.success" class="error-text">{{ result.error }}</pre>
+              </div>
+            </div>
+          </div>
 
-      <div style="margin-bottom: 30px;">
-        <h2>Stove</h2>
-        <button (click)="testGetAllStoves()">getAllStoves()</button>
-        <button (click)="testGetStoveById()">getStoveById(1)</button>
-        <button (click)="testGetStovesByPlayerId()">getStovesByPlayerId(1)</button>
-        <button (click)="testGetStovesByTypeId()">getStovesByTypeId(1)</button>
-        <button (click)="testCreateStove()">createStove(1, 1)</button>
-        <button (click)="testTransferStoveOwnership()">transferStoveOwnership(1, 2)</button>
-        <button (click)="testDeleteStove()">deleteStove(999)</button>
-        <button (click)="testCountStovesByPlayer()">countStovesByPlayer(1)</button>
-        <button (click)="testCountStovesByType()">countStovesByType(1)</button>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2>Ownership</h2>
-        <button (click)="testGetAllOwnerships()">getAllOwnerships()</button>
-        <button (click)="testGetOwnershipById()">getOwnershipById(1)</button>
-        <button (click)="testGetOwnershipHistoryByStoveId()">getOwnershipHistoryByStoveId(1)</button>
-        <button (click)="testGetOwnershipsByPlayerId()">getOwnershipsByPlayerId(1)</button>
-        <button (click)="testCreateOwnership()">createOwnership(1, 1, 'lootbox')</button>
-        <button (click)="testGetCurrentOwner()">getCurrentOwner(1)</button>
-        <button (click)="testDeleteOwnership()">deleteOwnership(999)</button>
-        <button (click)="testCountOwnershipChanges()">countOwnershipChanges(1)</button>
-        <button (click)="testCountStovesAcquiredByPlayer()">countStovesAcquiredByPlayer(1)</button>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2>PriceHistory</h2>
-        <button (click)="testGetAllPriceHistory()">getAllPriceHistory()</button>
-        <button (click)="testGetPriceHistoryById()">getPriceHistoryById(1)</button>
-        <button (click)="testGetPriceHistoryByTypeId()">getPriceHistoryByTypeId(1)</button>
-        <button (click)="testRecordSale()">recordSale(1, 5000)</button>
-        <button (click)="testGetPriceStats()">getPriceStats(1)</button>
-        <button (click)="testGetRecentPrices()">getRecentPrices(1, 5)</button>
-        <button (click)="testDeletePriceHistory()">deletePriceHistory(999)</button>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2>Listing</h2>
-        <button (click)="testGetAllListings()">getAllListings()</button>
-        <button (click)="testGetActiveListings()">getActiveListings()</button>
-        <button (click)="testGetListingById()">getListingById(1)</button>
-        <button (click)="testGetListingsBySellerId()">getListingsBySellerId(1)</button>
-        <button (click)="testGetActiveListingsBySellerId()">getActiveListingsBySellerId(1)</button>
-        <button (click)="testGetActiveListingByStoveId()">getActiveListingByStoveId(1)</button>
-        <button (click)="testCreateListing()">createListing(1, 1, 1000)</button>
-        <button (click)="testUpdateListingPrice()">updateListingPrice(1, 2000)</button>
-        <button (click)="testCancelListing()">cancelListing(1)</button>
-        <button (click)="testDeleteListing()">deleteListing(999)</button>
-        <button (click)="testCountActiveListingsBySeller()">countActiveListingsBySeller(1)</button>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2>Trade</h2>
-        <button (click)="testGetAllTrades()">getAllTrades()</button>
-        <button (click)="testGetTradeById()">getTradeById(1)</button>
-        <button (click)="testGetTradeByListingId()">getTradeByListingId(1)</button>
-        <button (click)="testGetTradesByBuyerId()">getTradesByBuyerId(1)</button>
-        <button (click)="testExecuteTrade()">executeTrade(1, 2)</button>
-        <button (click)="testGetRecentTrades()">getRecentTrades(5)</button>
-        <button (click)="testDeleteTrade()">deleteTrade(999)</button>
-        <button (click)="testCountTrades()">countTrades()</button>
-        <button (click)="testCountTradesByBuyer()">countTradesByBuyer(1)</button>
-      </div>
-
-      <div style="margin-top: 30px; padding: 10px; background: #f0f0f0;">
-        <h3>Result:</h3>
-        <pre>{{ lastResult | json }}</pre>
+          <div class="empty-state" *ngIf="results.length === 0">
+            <div class="empty-icon">📡</div>
+            <p>Click any endpoint button to see results here</p>
+          </div>
+        </main>
       </div>
     </div>
   `,
   styles: [`
-    button {
-      margin: 5px;
-      padding: 8px 12px;
+    .test-page {
+      min-height: 100vh;
+      background: #f5f7fa;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .page-header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .main-layout {
+      display: flex;
+      height: calc(100vh - 100px);
+    }
+
+    .sidebar {
+      width: 320px;
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .search-box {
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .category-item {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+
+    .category-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border: none;
       cursor: pointer;
-      font-family: monospace;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .category-header:hover {
+      background: #e9ecef;
+    }
+
+    .category-icon {
+      font-size: 18px;
+    }
+
+    .category-name {
+      flex: 1;
+      text-align: left;
+    }
+
+    .toggle-icon {
+      font-size: 10px;
+      color: #666;
+    }
+
+    .endpoint-list {
+      padding: 8px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .endpoint-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .endpoint-btn:hover {
+      background: #f0f4ff;
+      border-color: #667eea;
+    }
+
+    .endpoint-btn.running {
+      background: #fff3cd;
+      border-color: #ffc107;
+    }
+
+    .btn-text {
+      flex: 1;
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .results-panel {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      background: #f0f4ff;
+      border-color: #667eea;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .result-card.success {
+      border-left: 4px solid #28a745;
+    }
+
+    .result-card.error {
+      border-left: 4px solid #dc3545;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .badge {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
       font-size: 12px;
+      font-weight: bold;
     }
-    h2 {
-      margin-top: 20px;
-      margin-bottom: 10px;
+
+    .badge.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .endpoint-name {
+      flex: 1;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .duration {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #e9ecef;
+    }
+
+    .duration.fast {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .duration.slow {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .delete-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #999;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #f8d7da;
+      color: #dc3545;
+    }
+
+    .result-body {
+      padding: 16px;
+    }
+
+    .result-body pre {
+      margin: 0;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 13px;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .error-text {
+      color: #dc3545;
+      background: #f8d7da !important;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 400px;
+      color: #666;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state p {
       font-size: 16px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 5px;
-    }
-    pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
     }
   `]
 })
 export class TestPageComponent {
-  lastResult: unknown = null;
+  searchQuery = '';
+  runningEndpoint: string | null = null;
+  results: TestResult[] = [];
+  lastResult: TestResult | null = null;
 
-  private async call<T>(fn: () => Promise<T>, label: string): Promise<void> {
-    console.log(`Calling: ${label}`);
+  categories: ApiCategory[] = [
+    {
+      name: 'Player',
+      icon: '👤',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllPlayers(), label: 'getAllPlayers()', description: 'Fetch all players' },
+        { name: 'Get by ID', method: () => getPlayerById(1), label: 'getPlayerById(1)', description: 'Fetch player #1' },
+        { name: 'Create', method: () => createPlayer('test_' + Date.now()), label: 'createPlayer()', description: 'Create new test player' },
+        { name: 'Update Coins', method: () => updatePlayerCoins(1, 999), label: 'updatePlayerCoins(1, 999)', description: 'Set player coins to 999' },
+        { name: 'Update Lootboxes', method: () => updatePlayerLootboxCount(1, 5), label: 'updatePlayerLootboxCount(1, 5)', description: 'Set lootbox count' },
+        { name: 'Delete', method: () => deletePlayer(999), label: 'deletePlayer(999)', description: 'Delete player #999 (may fail)' }
+      ]
+    },
+    {
+      name: 'Lootbox',
+      icon: '🎁',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllLootboxes(), label: 'getAllLootboxes()', description: 'Fetch all lootboxes' },
+        { name: 'Get by ID', method: () => getLootboxById(1), label: 'getLootboxById(1)', description: 'Fetch lootbox #1' },
+        { name: 'Get by Player', method: () => getLootboxesByPlayerId(1), label: 'getLootboxesByPlayerId(1)', description: 'Fetch player #1 lootboxes' },
+        { name: 'Create', method: () => createLootbox(1, 1, 'free'), label: 'createLootbox(1, 1, free)', description: 'Create free lootbox' },
+        { name: 'Delete', method: () => deleteLootbox(999), label: 'deleteLootbox(999)', description: 'Delete lootbox #999' }
+      ]
+    },
+    {
+      name: 'Lootbox Type',
+      icon: '📦',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllLootboxTypes(), label: 'getAllLootboxTypes()', description: 'Fetch all lootbox types' },
+        { name: 'Get Available', method: () => getAvailableLootboxTypes(), label: 'getAvailableLootboxTypes()', description: 'Fetch available types' },
+        { name: 'Get by ID', method: () => getLootboxTypeById(1), label: 'getLootboxTypeById(1)', description: 'Fetch type #1' }
+      ]
+    },
+    {
+      name: 'Lootbox Drop',
+      icon: '🎲',
+      expanded: false,
+      endpoints: [
+        { name: 'Get by Lootbox', method: () => getDropsByLootboxId(1), label: 'getDropsByLootboxId(1)', description: 'Fetch drops for lootbox #1' },
+        { name: 'Create', method: () => createLootboxDrop(1, 1), label: 'createLootboxDrop(1, 1)', description: 'Create drop linking lootbox to stove' }
+      ]
+    },
+    {
+      name: 'Stove Type',
+      icon: '🔥',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllStoveTypes(), label: 'getAllStoveTypes()', description: 'Fetch all stove types' },
+        { name: 'Get by ID', method: () => getStoveTypeById(1), label: 'getStoveTypeById(1)', description: 'Fetch stove type #1' },
+        { name: 'Get by Rarity', method: () => getStoveTypesByRarity(Rarity.COMMON), label: 'getStoveTypesByRarity(common)', description: 'Fetch common stoves' },
+        { name: 'Create', method: () => createStoveType('Test_' + Date.now(), '/img.png', Rarity.COMMON, 10), label: 'createStoveType()', description: 'Create new stove type' },
+        { name: 'Update Weight', method: () => updateStoveTypeWeight(1, 20), label: 'updateStoveTypeWeight(1, 20)', description: 'Update drop weight' },
+        { name: 'Update Image', method: () => updateStoveTypeImage(1, '/new.png'), label: 'updateStoveTypeImage(1, /new.png)', description: 'Update image URL' },
+        { name: 'Delete', method: () => deleteStoveType(999), label: 'deleteStoveType(999)', description: 'Delete stove type #999' },
+        { name: 'Total Weight', method: () => getTotalLootboxWeight(), label: 'getTotalLootboxWeight()', description: 'Get total drop weight' }
+      ]
+    },
+    {
+      name: 'Stove',
+      icon: '🍳',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllStoves(), label: 'getAllStoves()', description: 'Fetch all stoves' },
+        { name: 'Get by ID', method: () => getStoveById(1), label: 'getStoveById(1)', description: 'Fetch stove #1' },
+        { name: 'Get by Player', method: () => getStovesByPlayerId(1), label: 'getStovesByPlayerId(1)', description: 'Fetch player #1 stoves' },
+        { name: 'Get by Type', method: () => getStovesByTypeId(1), label: 'getStovesByTypeId(1)', description: 'Fetch stoves of type #1' },
+        { name: 'Create', method: () => createStove(1, 1), label: 'createStove(1, 1)', description: 'Create new stove' },
+        { name: 'Transfer', method: () => transferStoveOwnership(1, 2), label: 'transferStoveOwnership(1, 2)', description: 'Transfer stove #1 to player #2' },
+        { name: 'Delete', method: () => deleteStove(999), label: 'deleteStove(999)', description: 'Delete stove #999' },
+        { name: 'Count by Player', method: () => countStovesByPlayer(1), label: 'countStovesByPlayer(1)', description: 'Count player #1 stoves' },
+        { name: 'Count by Type', method: () => countStovesByType(1), label: 'countStovesByType(1)', description: 'Count stoves of type #1' }
+      ]
+    },
+    {
+      name: 'Ownership',
+      icon: '📋',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllOwnerships(), label: 'getAllOwnerships()', description: 'Fetch all ownership records' },
+        { name: 'Get by ID', method: () => getOwnershipById(1), label: 'getOwnershipById(1)', description: 'Fetch ownership #1' },
+        { name: 'Get by Stove', method: () => getOwnershipHistoryByStoveId(1), label: 'getOwnershipHistoryByStoveId(1)', description: 'Fetch stove #1 history' },
+        { name: 'Get by Player', method: () => getOwnershipsByPlayerId(1), label: 'getOwnershipsByPlayerId(1)', description: 'Fetch player #1 ownerships' },
+        { name: 'Create', method: () => createOwnership(1, 1, 'lootbox'), label: 'createOwnership(1, 1, lootbox)', description: 'Create ownership record' },
+        { name: 'Get Current', method: () => getCurrentOwner(1), label: 'getCurrentOwner(1)', description: 'Get current owner of stove #1' },
+        { name: 'Delete', method: () => deleteOwnership(999), label: 'deleteOwnership(999)', description: 'Delete ownership #999' },
+        { name: 'Count Changes', method: () => countOwnershipChanges(1), label: 'countOwnershipChanges(1)', description: 'Count ownership changes for stove' },
+        { name: 'Count Acquired', method: () => countStovesAcquiredByPlayer(1), label: 'countStovesAcquiredByPlayer(1)', description: 'Count stoves acquired by player' }
+      ]
+    },
+    {
+      name: 'Price History',
+      icon: '💰',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllPriceHistory(), label: 'getAllPriceHistory()', description: 'Fetch all price history' },
+        { name: 'Get by ID', method: () => getPriceHistoryById(1), label: 'getPriceHistoryById(1)', description: 'Fetch price history #1' },
+        { name: 'Get by Type', method: () => getPriceHistoryByTypeId(1), label: 'getPriceHistoryByTypeId(1)', description: 'Fetch price history for type #1' },
+        { name: 'Record Sale', method: () => recordSale(1, 5000), label: 'recordSale(1, 5000)', description: 'Record sale of 5000 coins' },
+        { name: 'Get Stats', method: () => getPriceStats(1), label: 'getPriceStats(1)', description: 'Get price statistics' },
+        { name: 'Get Recent', method: () => getRecentPrices(1, 5), label: 'getRecentPrices(1, 5)', description: 'Get 5 recent prices' },
+        { name: 'Delete', method: () => deletePriceHistory(999), label: 'deletePriceHistory(999)', description: 'Delete price history #999' }
+      ]
+    },
+    {
+      name: 'Listing',
+      icon: '📜',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllListings(), label: 'getAllListings()', description: 'Fetch all listings' },
+        { name: 'Get Active', method: () => getActiveListings(), label: 'getActiveListings()', description: 'Fetch active listings' },
+        { name: 'Get by ID', method: () => getListingById(1), label: 'getListingById(1)', description: 'Fetch listing #1' },
+        { name: 'Get by Seller', method: () => getListingsBySellerId(1), label: 'getListingsBySellerId(1)', description: 'Fetch listings by seller #1' },
+        { name: 'Get Active by Seller', method: () => getActiveListingsBySellerId(1), label: 'getActiveListingsBySellerId(1)', description: 'Fetch active listings by seller' },
+        { name: 'Get by Stove', method: () => getActiveListingByStoveId(1), label: 'getActiveListingByStoveId(1)', description: 'Fetch listing for stove #1' },
+        { name: 'Create', method: () => createListing(1, 1, 1000), label: 'createListing(1, 1, 1000)', description: 'Create listing for 1000 coins' },
+        { name: 'Update Price', method: () => updateListingPrice(1, 2000), label: 'updateListingPrice(1, 2000)', description: 'Update price to 2000' },
+        { name: 'Cancel', method: () => cancelListing(1), label: 'cancelListing(1)', description: 'Cancel listing #1' },
+        { name: 'Delete', method: () => deleteListing(999), label: 'deleteListing(999)', description: 'Delete listing #999' },
+        { name: 'Count', method: () => countActiveListingsBySeller(1), label: 'countActiveListingsBySeller(1)', description: 'Count active listings' }
+      ]
+    },
+    {
+      name: 'Trade',
+      icon: '💱',
+      expanded: false,
+      endpoints: [
+        { name: 'Get All', method: () => getAllTrades(), label: 'getAllTrades()', description: 'Fetch all trades' },
+        { name: 'Get by ID', method: () => getTradeById(1), label: 'getTradeById(1)', description: 'Fetch trade #1' },
+        { name: 'Get by Listing', method: () => getTradeByListingId(1), label: 'getTradeByListingId(1)', description: 'Fetch trade for listing #1' },
+        { name: 'Get by Buyer', method: () => getTradesByBuyerId(1), label: 'getTradesByBuyerId(1)', description: 'Fetch trades by buyer #1' },
+        { name: 'Execute', method: () => executeTrade(1, 2), label: 'executeTrade(1, 2)', description: 'Execute trade (listing #1, buyer #2)' },
+        { name: 'Get Recent', method: () => getRecentTrades(5), label: 'getRecentTrades(5)', description: 'Get 5 recent trades' },
+        { name: 'Delete', method: () => deleteTrade(999), label: 'deleteTrade(999)', description: 'Delete trade #999' },
+        { name: 'Count All', method: () => countTrades(), label: 'countTrades()', description: 'Count all trades' },
+        { name: 'Count by Buyer', method: () => countTradesByBuyer(1), label: 'countTradesByBuyer(1)', description: 'Count trades by buyer' }
+      ]
+    }
+  ];
+
+  get filteredCategories(): ApiCategory[] {
+    if (!this.searchQuery.trim()) {
+      return this.categories;
+    }
+    const query = this.searchQuery.toLowerCase();
+    return this.categories.map(cat => ({
+      ...cat,
+      endpoints: cat.endpoints.filter(ep => 
+        ep.name.toLowerCase().includes(query) ||
+        ep.label.toLowerCase().includes(query) ||
+        ep.description?.toLowerCase().includes(query)
+      )
+    })).filter(cat => cat.endpoints.length > 0);
+  }
+
+  toggleCategory(category: ApiCategory): void {
+    category.expanded = !category.expanded;
+  }
+
+  async runTest(endpoint: ApiEndpoint): Promise<void> {
+    if (this.runningEndpoint) return;
+    
+    this.runningEndpoint = endpoint.label;
+    const startTime = performance.now();
+    
     try {
-      const result = await fn();
+      console.log(`Calling: ${endpoint.label}`);
+      const result = await endpoint.method();
+      const duration = Math.round(performance.now() - startTime);
+      
+      const testResult: TestResult = {
+        timestamp: new Date().toLocaleTimeString(),
+        endpoint: endpoint.label,
+        success: true,
+        data: result,
+        duration
+      };
+      
+      this.results.unshift(testResult);
+      this.lastResult = testResult;
       console.log('Success:', result);
-      this.lastResult = { success: true, data: result };
     } catch (err) {
+      const duration = Math.round(performance.now() - startTime);
+      
+      const testResult: TestResult = {
+        timestamp: new Date().toLocaleTimeString(),
+        endpoint: endpoint.label,
+        success: false,
+        error: String(err),
+        duration
+      };
+      
+      this.results.unshift(testResult);
+      this.lastResult = testResult;
       console.error('Error:', err);
-      this.lastResult = { success: false, error: String(err) };
+    } finally {
+      this.runningEndpoint = null;
     }
   }
 
-  // Player
-  testGetAllPlayers() { this.call(() => getAllPlayers(), 'getAllPlayers'); }
-  testGetPlayerById() { this.call(() => getPlayerById(1), 'getPlayerById(1)'); }
-  testCreatePlayer() { this.call(() => createPlayer('test_' + Date.now()), 'createPlayer'); }
-  testUpdatePlayerCoins() { this.call(() => updatePlayerCoins(1, 999), 'updatePlayerCoins(1, 999)'); }
-  testUpdatePlayerLootboxCount() { this.call(() => updatePlayerLootboxCount(1, 5), 'updatePlayerLootboxCount(1, 5)'); }
-  testDeletePlayer() { this.call(() => deletePlayer(999), 'deletePlayer(999)'); }
+  clearResults(): void {
+    this.results = [];
+    this.lastResult = null;
+  }
 
-  // Lootbox
-  testGetAllLootboxes() { this.call(() => getAllLootboxes(), 'getAllLootboxes'); }
-  testGetLootboxById() { this.call(() => getLootboxById(1), 'getLootboxById(1)'); }
-  testGetLootboxesByPlayerId() { this.call(() => getLootboxesByPlayerId(1), 'getLootboxesByPlayerId(1)'); }
-  testCreateLootbox() { this.call(() => createLootbox(1, 1, 'free'), 'createLootbox(1, 1, free)'); }
-  testDeleteLootbox() { this.call(() => deleteLootbox(999), 'deleteLootbox(999)'); }
+  removeResult(index: number): void {
+    this.results.splice(index, 1);
+    if (this.results.length === 0) {
+      this.lastResult = null;
+    }
+  }
 
-  // LootboxType
-  testGetAllLootboxTypes() { this.call(() => getAllLootboxTypes(), 'getAllLootboxTypes'); }
-  testGetAvailableLootboxTypes() { this.call(() => getAvailableLootboxTypes(), 'getAvailableLootboxTypes'); }
-  testGetLootboxTypeById() { this.call(() => getLootboxTypeById(1), 'getLootboxTypeById(1)'); }
-
-  // LootboxDrop
-  testGetDropsByLootboxId() { this.call(() => getDropsByLootboxId(1), 'getDropsByLootboxId(1)'); }
-  testCreateLootboxDrop() { this.call(() => createLootboxDrop(1, 1), 'createLootboxDrop(1, 1)'); }
-
-  // StoveType
-  testGetAllStoveTypes() { this.call(() => getAllStoveTypes(), 'getAllStoveTypes'); }
-  testGetStoveTypeById() { this.call(() => getStoveTypeById(1), 'getStoveTypeById(1)'); }
-  testGetStoveTypesByRarity() { this.call(() => getStoveTypesByRarity(Rarity.COMMON), 'getStoveTypesByRarity(common)'); }
-  testCreateStoveType() { this.call(() => createStoveType('Test_' + Date.now(), '/img.png', Rarity.COMMON, 10), 'createStoveType'); }
-  testUpdateStoveTypeWeight() { this.call(() => updateStoveTypeWeight(1, 20), 'updateStoveTypeWeight(1, 20)'); }
-  testUpdateStoveTypeImage() { this.call(() => updateStoveTypeImage(1, '/new.png'), 'updateStoveTypeImage(1, /new.png)'); }
-  testDeleteStoveType() { this.call(() => deleteStoveType(999), 'deleteStoveType(999)'); }
-  testGetTotalLootboxWeight() { this.call(() => getTotalLootboxWeight(), 'getTotalLootboxWeight'); }
-
-  // Stove
-  testGetAllStoves() { this.call(() => getAllStoves(), 'getAllStoves'); }
-  testGetStoveById() { this.call(() => getStoveById(1), 'getStoveById(1)'); }
-  testGetStovesByPlayerId() { this.call(() => getStovesByPlayerId(1), 'getStovesByPlayerId(1)'); }
-  testGetStovesByTypeId() { this.call(() => getStovesByTypeId(1), 'getStovesByTypeId(1)'); }
-  testCreateStove() { this.call(() => createStove(1, 1), 'createStove(1, 1)'); }
-  testTransferStoveOwnership() { this.call(() => transferStoveOwnership(1, 2), 'transferStoveOwnership(1, 2)'); }
-  testDeleteStove() { this.call(() => deleteStove(999), 'deleteStove(999)'); }
-  testCountStovesByPlayer() { this.call(() => countStovesByPlayer(1), 'countStovesByPlayer(1)'); }
-  testCountStovesByType() { this.call(() => countStovesByType(1), 'countStovesByType(1)'); }
-
-  // Ownership
-  testGetAllOwnerships() { this.call(() => getAllOwnerships(), 'getAllOwnerships'); }
-  testGetOwnershipById() { this.call(() => getOwnershipById(1), 'getOwnershipById(1)'); }
-  testGetOwnershipHistoryByStoveId() { this.call(() => getOwnershipHistoryByStoveId(1), 'getOwnershipHistoryByStoveId(1)'); }
-  testGetOwnershipsByPlayerId() { this.call(() => getOwnershipsByPlayerId(1), 'getOwnershipsByPlayerId(1)'); }
-  testCreateOwnership() { this.call(() => createOwnership(1, 1, 'lootbox'), 'createOwnership(1, 1, lootbox)'); }
-  testGetCurrentOwner() { this.call(() => getCurrentOwner(1), 'getCurrentOwner(1)'); }
-  testDeleteOwnership() { this.call(() => deleteOwnership(999), 'deleteOwnership(999)'); }
-  testCountOwnershipChanges() { this.call(() => countOwnershipChanges(1), 'countOwnershipChanges(1)'); }
-  testCountStovesAcquiredByPlayer() { this.call(() => countStovesAcquiredByPlayer(1), 'countStovesAcquiredByPlayer(1)'); }
-
-  // PriceHistory
-  testGetAllPriceHistory() { this.call(() => getAllPriceHistory(), 'getAllPriceHistory'); }
-  testGetPriceHistoryById() { this.call(() => getPriceHistoryById(1), 'getPriceHistoryById(1)'); }
-  testGetPriceHistoryByTypeId() { this.call(() => getPriceHistoryByTypeId(1), 'getPriceHistoryByTypeId(1)'); }
-  testRecordSale() { this.call(() => recordSale(1, 5000), 'recordSale(1, 5000)'); }
-  testGetPriceStats() { this.call(() => getPriceStats(1), 'getPriceStats(1)'); }
-  testGetRecentPrices() { this.call(() => getRecentPrices(1, 5), 'getRecentPrices(1, 5)'); }
-  testDeletePriceHistory() { this.call(() => deletePriceHistory(999), 'deletePriceHistory(999)'); }
-
-  // Listing
-  testGetAllListings() { this.call(() => getAllListings(), 'getAllListings'); }
-  testGetActiveListings() { this.call(() => getActiveListings(), 'getActiveListings'); }
-  testGetListingById() { this.call(() => getListingById(1), 'getListingById(1)'); }
-  testGetListingsBySellerId() { this.call(() => getListingsBySellerId(1), 'getListingsBySellerId(1)'); }
-  testGetActiveListingsBySellerId() { this.call(() => getActiveListingsBySellerId(1), 'getActiveListingsBySellerId(1)'); }
-  testGetActiveListingByStoveId() { this.call(() => getActiveListingByStoveId(1), 'getActiveListingByStoveId(1)'); }
-  testCreateListing() { this.call(() => createListing(1, 1, 1000), 'createListing(1, 1, 1000)'); }
-  testUpdateListingPrice() { this.call(() => updateListingPrice(1, 2000), 'updateListingPrice(1, 2000)'); }
-  testCancelListing() { this.call(() => cancelListing(1), 'cancelListing(1)'); }
-  testDeleteListing() { this.call(() => deleteListing(999), 'deleteListing(999)'); }
-  testCountActiveListingsBySeller() { this.call(() => countActiveListingsBySeller(1), 'countActiveListingsBySeller(1)'); }
-
-  // Trade
-  testGetAllTrades() { this.call(() => getAllTrades(), 'getAllTrades'); }
-  testGetTradeById() { this.call(() => getTradeById(1), 'getTradeById(1)'); }
-  testGetTradeByListingId() { this.call(() => getTradeByListingId(1), 'getTradeByListingId(1)'); }
-  testGetTradesByBuyerId() { this.call(() => getTradesByBuyerId(1), 'getTradesByBuyerId(1)'); }
-  testExecuteTrade() { this.call(() => executeTrade(1, 2), 'executeTrade(1, 2)'); }
-  testGetRecentTrades() { this.call(() => getRecentTrades(5), 'getRecentTrades(5)'); }
-  testDeleteTrade() { this.call(() => deleteTrade(999), 'deleteTrade(999)'); }
-  testCountTrades() { this.call(() => countTrades(), 'countTrades'); }
-  testCountTradesByBuyer() { this.call(() => countTradesByBuyer(1), 'countTradesByBuyer(1)'); }
+  copyLastResult(): void {
+    if (this.lastResult) {
+      navigator.clipboard.writeText(JSON.stringify(this.lastResult, null, 2));
+    }
+  }
 }
