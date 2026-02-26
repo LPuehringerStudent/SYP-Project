@@ -40,8 +40,9 @@ export class LootBoxHelper {
         this.items[40] = this.finalItem;
     }
 
-    private saveToDataBase(): void{
-        const service: StoveService = new StoveService(new Unit(false));
-        service.createStove()
-    }
+    // TODO: Implement proper database saving with typeId and currentOwnerId
+    // private saveToDataBase(): void{
+    //     const service: StoveService = new StoveService(new Unit(false));
+    //     service.createStove(typeId, currentOwnerId);
+    // }
 }

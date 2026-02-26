@@ -1,6 +1,5 @@
-﻿import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {createLootbox, LootboxDrop} from '../fetchers/lootbox.fetcher';
 import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
 
 @Component({
@@ -28,12 +27,8 @@ export class LootboxComponent implements AfterViewInit {
   showPopup = false;
   resultText = '';
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngAfterViewInit(): void {
-  }
-
   private lootBoxHelper: LootBoxHelper;
+
   constructor(private cdr: ChangeDetectorRef) {
     this.lootBoxHelper = new LootBoxHelper(cdr);
   }

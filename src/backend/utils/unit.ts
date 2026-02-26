@@ -6,7 +6,7 @@ import fs from "fs";
 
 const dbDir = path.join(process.cwd(), "src", "backend", "db");
 // Use TEST_DB_PATH environment variable if set (for testing), otherwise use default
-const dbFileName = process.env.TEST_DB_PATH || path.join(dbDir, "EmberExchange.db");
+const dbFileName = process.env['TEST_DB_PATH'] || path.join(dbDir, "EmberExchange.db");
 
 // Ensure the db directory exists
 if (!fs.existsSync(dbDir)) {
