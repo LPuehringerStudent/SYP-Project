@@ -1,6 +1,5 @@
 import {ChangeDetectorRef} from "@angular/core";
-import {Unit} from "../backend/utils/unit";
-import {StoveService} from "../backend/services/stove-service";
+import {Rarity} from "../shared/model";
 
 export interface LootItem {
     name: string;
@@ -9,7 +8,6 @@ export interface LootItem {
 }
 
 export class LootBoxHelper {
-
     private pool: LootItem[] = [
         { name: 'Common', color: '#b3e5fc', weight: 50 },
         { name: 'Uncommon', color: '#81c784', weight: 30 },
@@ -39,7 +37,22 @@ export class LootBoxHelper {
         this.finalItem = this.weightedPick();
         this.items[40] = this.finalItem;
     }
+    public returnTypeId(item: LootItem): number {
+        if (item.name === 'Common') return 1;
+        if (item.name === 'Uncommon') return 2;
+        if (item.name === 'Rare') return 3;
+        if (item.name === 'Epic') return 4;
+        if (item.name === 'Legendary') return 5;
 
+        return -1;
+    }
+    private returnRarity(typeId: number): Rarity {
+        if (typeId === 1) return Rarity.COMMON;
+        if (typeId === 3) return Rarity.RARE;
+        if (typeId === 5) return Rarity.EPIC;
+        if (typeId === 7) return Rarity.LEGENDARY;
+        return Rarity.COMMON;
+    }
     // TODO: Implement proper database saving with typeId and currentOwnerId
     // private saveToDataBase(): void{
     //     const service: StoveService = new StoveService(new Unit(false));
