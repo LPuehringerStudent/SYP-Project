@@ -1,12 +1,7 @@
 ﻿import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {createLootbox, LootboxDrop} from '../fetchers/lootbox.fetcher';
-
-interface LootItem {
-  name: string;
-  color: string;
-  weight: number;
-}
+import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
 
 @Component({
   selector: 'app-lootbox',
@@ -38,27 +33,17 @@ export class LootboxComponent implements AfterViewInit {
   ngAfterViewInit(): void {
   }
 
-  private weightedPick(): LootItem {
-    const sum = this.pool.reduce((a, b) => a + b.weight, 0);
-    let r = Math.random() * sum;
-    for (const p of this.pool) {
-      if ((r -= p.weight) <= 0) return p;
-    }
-    return this.pool[0];
+  private lootBoxHelper: LootBoxHelper;
+  constructor(private cdr: ChangeDetectorRef) {
+    this.lootBoxHelper = new LootBoxHelper(cdr);
   }
 
-  private buildStrip(): void {
-    this.items = [];
-    for (let i = 0; i < 60; i++) {
-      this.items.push(this.weightedPick());
-    }
-    this.finalItem = this.weightedPick();
-    this.items[40] = this.finalItem;
+  ngAfterViewInit(): void {
   }
 
   openBox(): void {
-    this.buildStrip();
-
+    this.lootBoxHelper.buildStrip();
+    this.items = this.lootBoxHelper.items;
     this.showOverlay = true;
     this.cdr.detectChanges();
 
@@ -96,7 +81,7 @@ export class LootboxComponent implements AfterViewInit {
   }
 
   private showResult(): void {
-    this.resultText = `You got: ${this.finalItem?.name || 'Unknown'}`;
+    this.resultText = `You got: ${this.lootBoxHelper.finalItem?.name || 'Unknown'}`;
     this.showPopup = true;
     this.cdr.detectChanges();
   }
