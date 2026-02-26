@@ -33,7 +33,18 @@
 }
 
 body {
-  background: var(--warm-gray);
+  background-color: #d4d0c8;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(180, 175, 165, 0.4) 0%, transparent 25%),
+    radial-gradient(circle at 60% 20%, rgba(160, 155, 145, 0.3) 0%, transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(170, 165, 155, 0.35) 0%, transparent 22%),
+    radial-gradient(circle at 30% 70%, rgba(175, 170, 160, 0.3) 0%, transparent 18%),
+    radial-gradient(circle at 70% 80%, rgba(165, 160, 150, 0.4) 0%, transparent 24%),
+    radial-gradient(circle at 10% 50%, rgba(185, 180, 170, 0.25) 0%, transparent 15%),
+    radial-gradient(circle at 50% 40%, rgba(170, 165, 155, 0.35) 0%, transparent 20%),
+    radial-gradient(circle at 90% 10%, rgba(160, 155, 145, 0.3) 0%, transparent 18%),
+    linear-gradient(135deg, #c9c5bd 0%, #d4d0c8 25%, #cfccc4 50%, #d4d0c8 75%, #c9c5bd 100%);
+  background-size: 120px 80px, 100px 90px, 110px 70px, 90px 85px, 130px 75px, 80px 95px, 105px 80px, 95px 70px, 100% 100%;
   color: var(--charcoal);
   overflow-x: hidden;
 }
@@ -117,10 +128,10 @@ body {
   width: 260px;
   height: 100%;
   background: linear-gradient(180deg, 
-    #2d3436 0%, 
-    #3d4142 30%,
-    #4a4a4a 70%,
-    #5a3d36 100%
+    #3a3530 0%, 
+    #4a453f 30%,
+    #5a554d 70%,
+    #6b4838 100%
   );
   padding-top: 90px;
   transform: translateX(-100%);
@@ -176,7 +187,7 @@ body {
 .content {
   margin-top: 60px;
   min-height: calc(100vh - 60px);
-  background: var(--warm-gray);
+  background: transparent;
 }
 
 /* =====================================
@@ -197,15 +208,16 @@ body {
 ===================================== */
 
 .card {
-  background: linear-gradient(145deg, #ffffff 0%, #faf8f5 100%);
+  background: linear-gradient(145deg, #f5f2ed 0%, #ebe7e0 100%);
   border-radius: 16px;
   padding: 35px 30px;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(232, 93, 4, 0.08);
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(232, 93, 4, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
   cursor: pointer;
-  border: 1px solid #e8e6e3;
+  border: 1px solid #c9c4bb;
   position: relative;
   overflow: hidden;
 }
