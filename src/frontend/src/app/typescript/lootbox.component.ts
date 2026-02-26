@@ -14,10 +14,24 @@ import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
 export class LootboxComponent implements AfterViewInit {
   @ViewChild('itemsContainer') itemsElement!: ElementRef<HTMLElement>;
 
-  resultText = '';
-  showPopup = false;
-  showOverlay = false;
+  private pool: LootItem[] = [
+    { name: 'Common', color: '#b3e5fc', weight: 50 },
+    { name: 'Rare', color: '#81c784', weight: 30 },
+    { name: 'Epic', color: '#ba68c8', weight: 15 },
+    { name: 'Legendary', color: '#ffcc80', weight: 4.999 },
+    { name: 'Secret', color: '#ff8a80', weight: 0.001 },
+  ];
+
   items: LootItem[] = [];
+  finalItem: LootItem | null = null;
+  showOverlay = false;
+  showPopup = false;
+  resultText = '';
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit(): void {
+  }
 
   private lootBoxHelper: LootBoxHelper;
   constructor(private cdr: ChangeDetectorRef) {

@@ -1,17 +1,97 @@
-﻿<div class="card-grid">
-  <div class="card" routerLink="/lootboxes">
-    <h1>Lootboxes</h1>
-    <p>Access and manage lootboxes. Placeholder content.</p>
-  </div>
+﻿<div class="main-menu-container">
+  <!-- User Welcome Section -->
+  <section class="user-welcome">
+    <div class="welcome-header">
+      <h1>Hello, <span class="username">PlayerOne</span> 👋</h1>
+      <button class="inventory-btn" routerLink="/inventory">
+        <span class="btn-icon">🎒</span>
+        View Inventory
+      </button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Total Money Owned</span>
+        <span class="stat-value">0 Coal</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Lootboxes Opened</span>
+        <span class="stat-value">0 Total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Stoves Owned</span>
+        <span class="stat-value">0 Items</span>
+      </div>
+    </div>
+  </section>
 
-  <div class="card">
-    <h1>Games</h1>
-    <p>Browse available games. Placeholder content.</p>
-  </div>
+  <!-- Games Carousel -->
+  <section class="games-section">
+    <h2 class="section-title">Play Games</h2>
+    <div class="games-carousel">
+      <button class="carousel-arrow left" (click)="scrollGames('left')">‹</button>
+      <div class="games-track" #gamesTrack>
+        <div class="game-card" *ngFor="let game of games">
+          <div class="game-icon">{{game.icon}}</div>
+          <h3>{{game.name}}</h3>
+          <p class="game-reward">+{{game.reward}} Coal/win</p>
+        </div>
+      </div>
+      <button class="carousel-arrow right" (click)="scrollGames('right')">›</button>
+    </div>
+  </section>
 
-  <div class="card">
-    <h1>Marketplace</h1>
-    <p>Buy, sell, and trade items. Placeholder content.</p>
+  <!-- Main Content Area -->
+  <div class="content-split">
+    <!-- Left: Feature Cards -->
+    <div class="cards-area">
+      <div class="card-grid" #cardsGrid>
+        <!-- Removed 'featured' class and card-badge div -->
+        <div class="card" routerLink="/lootboxes">
+          <h1>Lootboxes</h1>
+          <p>Open limited edition lootboxes to collect unique stoves. Global opening limit applies!</p>
+          <div class="card-footer">
+            <span class="availability">0 / 10,000 opened</span>
+          </div>
+        </div>
+
+        <div class="card" routerLink="/games">
+          <h1>Games</h1>
+          <p>Play mini-games to earn coal currency. Compete on leaderboards and unlock achievements.</p>
+          <div class="card-footer">
+            <span class="play-count">0 games played</span>
+          </div>
+        </div>
+
+        <div class="card" routerLink="/marketplace">
+          <h1>Marketplace</h1>
+          <p>Buy, sell, and trade stove cosmetics with other players. Set your own prices!</p>
+          <div class="card-footer">
+            <span class="listing-count">0 active listings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Live Feed Sidebar -->
+    <aside class="live-feed" [style.height.px]="cardsHeight">
+      <div class="feed-header">
+        <span class="live-dot"></span>
+        <h3>Recent Pulls</h3>
+      </div>
+      <div class="feed-scroll-container">
+        <div class="feed-content">
+          <div class="feed-item" *ngFor="let pull of recentPulls">
+            <div class="pull-icon">{{pull.stoveIcon}}</div>
+            <div class="pull-info">
+              <span class="pull-user">{{pull.username}}</span>
+              <span class="pull-item">{{pull.itemName}}</span>
+              <span class="pull-rarity" [class]="pull.rarity">{{pull.rarity}}</span>
+            </div>
+            <span class="pull-time">{{pull.timeAgo}}</span>
+          </div>
+        </div>
+        <div class="feed-fade"></div>
+      </div>
+    </aside>
   </div>
 </div>
-

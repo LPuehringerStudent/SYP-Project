@@ -1,0 +1,191 @@
+﻿/* =========================
+   Layout
+========================= */
+
+.inventory-layout {
+  display: flex;
+  height: calc(100vh - 80px);
+  background: #f6f8fc;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* =========================
+   Sidebar
+========================= */
+
+.inventory-sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #ffffff, #f2f5ff);
+  padding: 28px 20px;
+  border-right: 1px solid #e6e9f5;
+}
+
+.inventory-sidebar h2 {
+  font-size: 18px;
+  margin-bottom: 22px;
+  color: #3f51b5;
+}
+
+/* Sidebar buttons */
+.sidebar-btn {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.sidebar-btn:hover {
+  background: #eef2ff;
+  color: #3f51b5;
+}
+
+.sidebar-btn.active {
+  background: #3f51b5;
+  color: white;
+}
+
+/* =========================
+   Main Area
+========================= */
+
+.inventory-main {
+  flex: 1;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.inventory-header {
+  margin-bottom: 24px;
+}
+
+.inventory-header h1 {
+  font-size: 26px;
+  color: #333;
+}
+
+.inventory-header .hint {
+  font-size: 13px;
+  color: #777;
+}
+
+/* =========================
+   Grid
+========================= */
+
+.inventory-grid {
+  flex: 1;
+  background: #f9fbff;
+  border-radius: 16px;
+  padding: 30px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+
+  border: 1px solid #e7ebf8;
+}
+
+/* =========================
+   Empty State
+========================= */
+
+.empty-state {
+  grid-column: 1 / -1;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #999;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #e9eeff, #f5f7ff);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 36px;
+  margin-bottom: 14px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+}
+
+.empty-state span {
+  font-size: 13px;
+  color: #888;
+}
+
+/* =========================
+   Inventory Slot (future use)
+========================= */
+
+.inventory-slot {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  aspect-ratio: 1 / 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  cursor: pointer;
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.inventory-slot:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(63,81,181,0.25);
+}
+
+.slot-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  border-radius: 14px;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.slot-amount {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  background: #3f51b5;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
