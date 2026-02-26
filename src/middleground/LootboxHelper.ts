@@ -1,4 +1,6 @@
-import {AfterViewInit, ChangeDetectorRef, ElementRef, ViewChild} from "@angular/core";
+import {ChangeDetectorRef} from "@angular/core";
+import {Unit} from "../backend/utils/unit";
+import {StoveService} from "../backend/services/stove-service";
 
 export interface LootItem {
     name: string;
@@ -36,5 +38,10 @@ export class LootBoxHelper {
         }
         this.finalItem = this.weightedPick();
         this.items[40] = this.finalItem;
+    }
+
+    private saveToDataBase(): void{
+        const service: StoveService = new StoveService(new Unit(false));
+        service.createStove()
     }
 }
