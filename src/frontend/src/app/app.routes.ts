@@ -5,13 +5,21 @@ import {MainMenuComponent} from './typescript/main-menu-component';
 import {SettingsComponent} from './typescript/settings-component';
 import {InventoryComponent} from './typescript/inventory_component';
 import {UpdateLogComponent} from './typescript/update_log_component';
+import {MarketplaceComponent} from './typescript/marketplace.component';
+import {GamesComponent} from './typescript/games.component';
+import {NotFoundComponent} from './typescript/not-found.component';
 
 export const routes: Routes = [
-  // Routes will be added here when components are created
+  { path: '', component: MainMenuComponent },
+  { path: 'lootboxes', component: LootboxComponent },
+  { path: 'marketplace', component: MarketplaceComponent },
+  { path: 'games', component: GamesComponent },
+  { path: 'inventory', component: InventoryComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: 'test', component: TestPageComponent },
-  {path: 'lootboxes', component: LootboxComponent},
-  {path: '', component: MainMenuComponent},
-  {path: 'settings', component: SettingsComponent},
-  {path: 'inventory', component: InventoryComponent },
-  {path: 'update-log', component: UpdateLogComponent }
+  { path: 'update-log', component: UpdateLogComponent },
+  { path: 'support', component: NotFoundComponent },
+  { path: 'login', component: NotFoundComponent },
+  { path: 'signup', component: NotFoundComponent },
+  { path: '**', component: NotFoundComponent }
 ];

@@ -1,7 +1,7 @@
 export enum Rarity {
     COMMON = "common",
     RARE = "rare",
-    MYTHIC = "mythic",
+    EPIC = "epic",
     LEGENDARY = "legendary",
     LIMITED = "limited"
 }

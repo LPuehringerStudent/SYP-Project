@@ -1,5 +1,5 @@
-﻿import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import {NgIf} from '@angular/common';
 
 interface InventoryLootbox {
@@ -13,16 +13,16 @@ interface InventoryLootbox {
   standalone: true,
   templateUrl: '../html/inventory.html',
   imports: [
-    NgIf
+    NgIf,
+    RouterModule
   ],
   styleUrls: ['../css/inventory.css']
 })
 export class InventoryComponent {
   activeTab: 'lootboxes' | 'items' = 'lootboxes';
 
-  // dummy data
+  // Empty arrays to show empty state
   lootboxes: any[] = [];
-
   items: any[] = [];
 
   constructor(private router: Router) {}

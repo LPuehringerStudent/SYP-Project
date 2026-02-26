@@ -18,8 +18,8 @@ GET http://localhost:3000/api/stove-types/rarity/common
 ### Get Stove Types by Rarity (rare)
 GET http://localhost:3000/api/stove-types/rarity/rare
 
-### Get Stove Types by Rarity (mythic)
-GET http://localhost:3000/api/stove-types/rarity/mythic
+### Get Stove Types by Rarity (epic)
+GET http://localhost:3000/api/stove-types/rarity/epic
 
 ### Get Stove Types by Rarity (legendary)
 GET http://localhost:3000/api/stove-types/rarity/legendary

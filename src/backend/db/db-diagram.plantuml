@@ -56,7 +56,7 @@ table(StoveType) {
     primary_key(typeId): INTEGER
     name: TEXT
     imageUrl: TEXT
-    rarity: TEXT «common|rare|mythic|legendary|limited»
+    rarity: TEXT «common|rare|epic|legendary|limited»
     lootboxWeight: INTEGER
 }
 

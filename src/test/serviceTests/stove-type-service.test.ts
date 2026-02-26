@@ -71,7 +71,7 @@ describe('StoveTypeService', () => {
         });
 
         it('should handle all rarity types', () => {
-            const rarities = [Rarity.COMMON, Rarity.RARE, Rarity.MYTHIC, Rarity.LEGENDARY, Rarity.LIMITED];
+            const rarities = [Rarity.COMMON, Rarity.RARE, Rarity.EPIC, Rarity.LEGENDARY, Rarity.LIMITED];
 
             rarities.forEach(rarity => {
                 mockStmt.all.mockReturnValue([]);

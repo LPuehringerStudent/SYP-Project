@@ -37,7 +37,7 @@ describe("StoveType API Endpoints", () => {
                 typeId INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 imageUrl TEXT NOT NULL,
-                rarity TEXT NOT NULL CHECK (rarity IN ('common', 'rare', 'mythic', 'legendary', 'limited')),
+                rarity TEXT NOT NULL CHECK (rarity IN ('common', 'rare', 'epic', 'legendary', 'limited')),
                 lootboxWeight INTEGER NOT NULL
             ) STRICT
         `);
@@ -47,7 +47,7 @@ describe("StoveType API Endpoints", () => {
             (1, 'Standard Stove', '/images/stoves/standard.png', 'common', 100),
             (2, 'Bronze Stove', '/images/stoves/bronze.png', 'rare', 50),
             (3, 'Silver Stove', '/images/stoves/silver.png', 'rare', 40),
-            (4, 'Golden Stove', '/images/stoves/golden.png', 'mythic', 20),
+            (4, 'Golden Stove', '/images/stoves/golden.png', 'epic', 20),
             (5, 'Dragon Stove', '/images/stoves/dragon.png', 'legendary', 5),
             (6, 'Unique Stove', '/images/stoves/unique.png', 'limited', 1)
         `);
@@ -138,15 +138,15 @@ describe("StoveType API Endpoints", () => {
             });
         });
 
-        it("should return stove types with rarity 'mythic'", async () => {
+        it("should return stove types with rarity 'epic'", async () => {
             const response = await request(app)
-                .get("/api/stove-types/rarity/mythic")
+                .get("/api/stove-types/rarity/epic")
                 .expect(200);
 
             expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(1);
             response.body.forEach((type: any) => {
-                expect(type.rarity).toBe("mythic");
+                expect(type.rarity).toBe("epic");
             });
         });
 

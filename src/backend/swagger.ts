@@ -89,7 +89,7 @@ const options: swaggerJsdoc.Options = {
                         typeId: { type: "integer", description: "Unique stove type ID" },
                         name: { type: "string", description: "Stove type name" },
                         imageUrl: { type: "string", description: "URL to stove image" },
-                        rarity: { type: "string", enum: ["common", "rare", "mythic", "legendary", "limited"], description: "Rarity level" },
+                        rarity: { type: "string", enum: ["common", "rare", "epic", "legendary", "limited"], description: "Rarity level" },
                         lootboxWeight: { type: "integer", description: "Drop probability weight (higher = more common)" },
                     },
                     required: ["typeId", "name", "imageUrl", "rarity", "lootboxWeight"],
