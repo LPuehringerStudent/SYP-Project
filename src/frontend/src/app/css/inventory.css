@@ -24,7 +24,7 @@
 .inventory-sidebar h2 {
   font-size: 18px;
   margin-bottom: 22px;
-  color: #3f51b5;
+  color: #e85d04;
 }
 
 /* Sidebar buttons */
@@ -47,11 +47,11 @@
 
 .sidebar-btn:hover {
   background: #eef2ff;
-  color: #3f51b5;
+  color: #e85d04;
 }
 
 .sidebar-btn.active {
-  background: #3f51b5;
+  background: #e85d04;
   color: white;
 }
 
@@ -168,7 +168,7 @@
 .slot-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  background: linear-gradient(135deg, #e85d04, #f48c06);
   border-radius: 14px;
   color: white;
 
@@ -182,7 +182,7 @@
   position: absolute;
   bottom: 8px;
   right: 10px;
-  background: #3f51b5;
+  background: #e85d04;
   color: white;
   font-size: 12px;
   font-weight: 700;

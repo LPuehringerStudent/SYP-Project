@@ -16,11 +16,11 @@
 ===================================== */
 
 .user-welcome {
-  background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
+  background: linear-gradient(135deg, #e85d04 0%, #f48c06 100%);
   border-radius: 20px;
   padding: 28px 32px;
   color: white;
-  box-shadow: 0 10px 40px rgba(63, 81, 181, 0.3);
+  box-shadow: 0 10px 40px rgba(232, 93, 4, 0.3);
 }
 
 .welcome-header {
@@ -43,7 +43,7 @@
 
 .inventory-btn {
   background: rgba(255, 255, 255, 0.95);
-  color: #3f51b5;
+  color: #e85d04;
   border: none;
   padding: 12px 24px;
   border-radius: 12px;
@@ -149,9 +149,9 @@
 }
 
 .game-card:hover {
-  border-color: #3f51b5;
+  border-color: #e85d04;
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(63, 81, 181, 0.15);
+  box-shadow: 0 8px 25px rgba(232, 93, 4, 0.15);
 }
 
 .game-icon {
@@ -168,9 +168,9 @@
 
 .game-reward {
   font-size: 12px;
-  color: #3f51b5;
+  color: #e85d04;
   font-weight: 600;
-  background: rgba(63, 81, 181, 0.1);
+  background: rgba(232, 93, 4, 0.1);
   padding: 4px 10px;
   border-radius: 20px;
   display: inline-block;
@@ -193,7 +193,7 @@
 }
 
 .carousel-arrow:hover {
-  background: #3f51b5;
+  background: #e85d04;
   color: white;
   transform: scale(1.1);
 }
@@ -237,8 +237,8 @@
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(63, 81, 181, 0.15);
-  border-color: rgba(63, 81, 181, 0.1);
+  box-shadow: 0 20px 40px rgba(232, 93, 4, 0.15);
+  border-color: rgba(232, 93, 4, 0.1);
 }
 
 /* Removed .card.featured and .card-badge styles - now all cards look the same */
@@ -267,9 +267,9 @@
 
 .card-footer span {
   font-size: 12px;
-  color: #3f51b5;
+  color: #e85d04;
   font-weight: 600;
-  background: rgba(63, 81, 181, 0.08);
+  background: rgba(232, 93, 4, 0.08);
   padding: 6px 12px;
   border-radius: 20px;
 }
@@ -291,8 +291,8 @@
 }
 
 .live-feed:hover {
-  box-shadow: 0 20px 40px rgba(63, 81, 181, 0.15);
-  border-color: rgba(63, 81, 181, 0.1);
+  box-shadow: 0 20px 40px rgba(232, 93, 4, 0.15);
+  border-color: rgba(232, 93, 4, 0.1);
 }
 
 .feed-header {
@@ -394,7 +394,7 @@
 
 .feed-item:hover {
   background: #f0f3ff;
-  border-color: rgba(63, 81, 181, 0.2);
+  border-color: rgba(232, 93, 4, 0.2);
   transform: translateX(4px);
 }
 

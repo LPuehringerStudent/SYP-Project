@@ -25,7 +25,7 @@
 .log-header h1 {
   font-size: 28px;
   margin: 0 0 8px 0;
-  color: #3f51b5;
+  color: #e85d04;
 }
 
 .log-header p {
@@ -55,7 +55,7 @@
 }
 
 .version-tag {
-  background: #3f51b5;
+  background: #e85d04;
   color: white;
   padding: 6px 14px;
   border-radius: 20px;
@@ -171,7 +171,7 @@
 
 .mini-version {
   background: #e8eaf6;
-  color: #3f51b5;
+  color: #e85d04;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
@@ -196,7 +196,7 @@
   background: transparent;
   border: 2px dashed #c5cae9;
   border-radius: 10px;
-  color: #3f51b5;
+  color: #e85d04;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -230,7 +230,7 @@
 }
 
 .github-box a {
-  color: #3f51b5;
+  color: #e85d04;
   text-decoration: none;
   font-weight: 600;
 }
