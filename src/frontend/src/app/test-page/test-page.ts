@@ -178,7 +178,7 @@ interface ApiEndpoint {
     }
 
     .page-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #e85d04 0%, #d00000 100%);
       color: white;
       padding: 24px 32px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -224,7 +224,7 @@ interface ApiEndpoint {
 
     .search-input:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: #e85d04;
     }
 
     .category-list {
@@ -295,7 +295,7 @@ interface ApiEndpoint {
 
     .endpoint-btn:hover {
       background: #f0f4ff;
-      border-color: #667eea;
+      border-color: #e85d04;
     }
 
     .endpoint-btn.running {
@@ -352,7 +352,7 @@ interface ApiEndpoint {
 
     .action-btn:hover:not(:disabled) {
       background: #f0f4ff;
-      border-color: #667eea;
+      border-color: #e85d04;
     }
 
     .action-btn:disabled {
