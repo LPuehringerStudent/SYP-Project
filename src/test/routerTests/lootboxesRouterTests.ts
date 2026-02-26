@@ -68,7 +68,7 @@ describe('Lootbox API Endpoints', () => {
                 typeId INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 imageUrl TEXT NOT NULL,
-                rarity TEXT NOT NULL CHECK (rarity IN ('common', 'rare', 'mythic', 'legendary', 'limited')),
+                rarity TEXT NOT NULL CHECK (rarity IN ('common', 'rare', 'epic', 'legendary', 'limited')),
                 lootboxWeight INTEGER NOT NULL
             ) STRICT
         `);

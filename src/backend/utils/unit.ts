@@ -151,8 +151,8 @@ export function ensureSampleDataInserted(unit: Unit): "inserted" | "skipped" {
             { name: "Standard Stove", imageUrl: "/images/stoves/standard.png", rarity: "common", lootboxWeight: 80 },
             { name: "Bronze Stove", imageUrl: "/images/stoves/bronze.png", rarity: "rare", lootboxWeight: 50 },
             { name: "Silver Stove", imageUrl: "/images/stoves/silver.png", rarity: "rare", lootboxWeight: 40 },
-            { name: "Golden Stove", imageUrl: "/images/stoves/golden.png", rarity: "mythic", lootboxWeight: 20 },
-            { name: "Crystal Stove", imageUrl: "/images/stoves/crystal.png", rarity: "mythic", lootboxWeight: 15 },
+            { name: "Golden Stove", imageUrl: "/images/stoves/golden.png", rarity: "epic", lootboxWeight: 20 },
+            { name: "Crystal Stove", imageUrl: "/images/stoves/crystal.png", rarity: "epic", lootboxWeight: 15 },
             { name: "Dragon Stove", imageUrl: "/images/stoves/dragon.png", rarity: "legendary", lootboxWeight: 5 },
             { name: "Phoenix Stove", imageUrl: "/images/stoves/phoenix.png", rarity: "legendary", lootboxWeight: 3 },
             { name: "One of a Kind", imageUrl: "/images/stoves/unique.png", rarity: "limited", lootboxWeight: 1 }
@@ -402,7 +402,7 @@ class DB {
                 typeId integer primary key autoincrement,
                 name text not null,
                 imageUrl text not null,
-                rarity text not null check (rarity in ('common', 'rare', 'mythic', 'legendary', 'limited')),
+                rarity text not null check (rarity in ('common', 'rare', 'epic', 'legendary', 'limited')),
                 lootboxWeight integer not null
             ) strict
         `);
