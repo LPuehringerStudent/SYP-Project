@@ -1,0 +1,24 @@
+﻿<div id="app">
+  <div id="lootbox"></div>
+  <button id="openBtn" (click)="openBox()">Open</button>
+</div>
+
+<div id="overlay" *ngIf="showOverlay">
+  <div style="position: relative">
+    <div id="marker"></div>
+    <div id="roller">
+      <div id="items" #itemsContainer>
+        <div *ngFor="let item of items" class="item" [style.background]="item.color">
+          {{ item.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="popup" *ngIf="showPopup">
+  <div id="popupBox">
+    <h2 id="result">{{ resultText }}</h2>
+    <button id="okBtn" (click)="resetAll()">Okay</button>
+  </div>
+</div>

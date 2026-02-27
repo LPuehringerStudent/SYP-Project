@@ -1,0 +1,95 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Local database files (uncomment to ignore)
+# db/
+*.db
+# *.sqlite
+# *.sqlite3
+
+# IDE - IntelliJ/WebStorm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# dotenv environment variables file
+.env
+.env.local
+.env.*.local
+
+# Agent/AI working folder (local only)
+Agent/
+
+# Project documentation (not for production)
+info/
+
+# Test-only code (kept for sprint review)
+# src/test/
+# src/backend/__mocks__/
+# src/frontend/src/app/test-page/
+
+# Source art files (editor projects)
+*.pixil
+
+# Dev infrastructure
+github/discord_ids/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
