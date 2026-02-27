@@ -2,6 +2,10 @@
 
 A virtual marketplace and collection game for trading unique stoves. Built as an SYP (School Year Project) 2026.
 
+**Quick Links:** [`/info`](./info) — Project documentation & resources
+
+---
+
 ## Overview
 
 EmberExchange is a full-stack web application where players can:
@@ -41,6 +45,13 @@ EmberExchange is a full-stack web application where players can:
 - ✅ Marketplace listings and trades
 - ✅ Price history tracking
 - ✅ Responsive UI with warm stove theme
+
+## Release Schedule
+
+| Version | Status | Expected Date |
+|:-------:|:------:|:-------------:|
+| `0.0.0` | ✅ Current | — |
+| `0.1.0` | 🚧 In Progress | **27.02.2026** |
 
 ## Project Structure
 
@@ -135,10 +146,16 @@ Stoves come in 5 rarity tiers with different drop rates:
 | Legendary | Gold | Exceptional stoves, very rare |
 | Limited | Red | Special event stoves, extremely rare |
 
+## Branch Strategy
+
+> **Active Development:** `develop` branch  
+> **Current Release:** `main` branch
+
 ## Team
 
 SYP Project 2026 - HTL Leonding
 
 ---
 
+*Last updated: February 2026*  
 *Note: This project is under active development. Some features may be marked as WIP.*
