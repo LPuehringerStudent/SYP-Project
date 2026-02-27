@@ -31,28 +31,28 @@ export class MainMenuComponent implements AfterViewInit, OnDestroy {
   private resizeObserver: ResizeObserver | null = null;
 
   games: Game[] = [
-    { name: 'Dummy', icon: '⚠️', reward: 50 },
-    { name: 'Dummy', icon: '⚠️', reward: 75 },
-    { name: 'Dummy', icon: '⚠️', reward: 100 },
-    { name: 'Dummy', icon: '⚠️', reward: 150 },
-    { name: 'Dummy', icon: '⚠️', reward: 200 },
-    { name: 'Dummy', icon: '⚠️', reward: 250 },
-    { name: 'Dummy', icon: '⚠️', reward: 300 },
-    { name: 'Dummy', icon: '⚠️', reward: 400 },
-    { name: 'Dummy', icon: '⚠️', reward: 500 },
-    { name: 'Dummy', icon: '⚠️', reward: 750 }
+    { name: 'Dummy', icon: '⚠', reward: 50 },
+    { name: 'Dummy', icon: '⚠', reward: 75 },
+    { name: 'Dummy', icon: '⚠', reward: 100 },
+    { name: 'Dummy', icon: '⚠', reward: 150 },
+    { name: 'Dummy', icon: '⚠', reward: 200 },
+    { name: 'Dummy', icon: '⚠', reward: 250 },
+    { name: 'Dummy', icon: '⚠', reward: 300 },
+    { name: 'Dummy', icon: '⚠', reward: 400 },
+    { name: 'Dummy', icon: '⚠', reward: 500 },
+    { name: 'Dummy', icon: '⚠', reward: 750 }
   ];
 
   recentPulls: RecentPull[] = [
-    { username: 'PlayerTwo', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'legendary', timeAgo: '2m' },
-    { username: 'PlayerThree', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'epic', timeAgo: '5m' },
-    { username: 'PlayerFour', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'rare', timeAgo: '10m' },
-    { username: 'PlayerFive', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'common', timeAgo: '15m' },
-    { username: 'PlayerSix', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'epic', timeAgo: '20m' },
-    { username: 'PlayerSeven', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'legendary', timeAgo: '30m' },
-    { username: 'PlayerEight', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'rare', timeAgo: '45m' },
-    { username: 'PlayerNine', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'common', timeAgo: '1h' },
-    { username: 'PlayerTen', itemName: 'Dummy Stove', stoveIcon: '♨️', rarity: 'epic', timeAgo: '2h' }
+    { username: 'PlayerTwo', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'legendary', timeAgo: '2m' },
+    { username: 'PlayerThree', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'epic', timeAgo: '5m' },
+    { username: 'PlayerFour', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'rare', timeAgo: '10m' },
+    { username: 'PlayerFive', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'common', timeAgo: '15m' },
+    { username: 'PlayerSix', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'epic', timeAgo: '20m' },
+    { username: 'PlayerSeven', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'legendary', timeAgo: '30m' },
+    { username: 'PlayerEight', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'rare', timeAgo: '45m' },
+    { username: 'PlayerNine', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'common', timeAgo: '1h' },
+    { username: 'PlayerTen', itemName: 'Dummy Stove', stoveIcon: '♨', rarity: 'epic', timeAgo: '2h' }
   ];
 
   constructor(private cdr: ChangeDetectorRef) {}
