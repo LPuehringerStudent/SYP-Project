@@ -8,16 +8,16 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 32px;
 }
 
 /* =====================================
-   User Welcome Section - Orange
+   User Welcome Section
 ===================================== */
 
 .user-welcome {
-  background: #e85d04;
-  border-radius: 20px 20px 0 0;
+  background: linear-gradient(135deg, #e85d04 0%, #f48c06 100%);
+  border-radius: 20px;
   padding: 28px 32px;
   color: white;
   box-shadow: 0 10px 40px rgba(232, 93, 4, 0.3);
@@ -37,7 +37,7 @@
 }
 
 .username {
-  color: #ffffff;
+  color: #ffd700;
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -97,16 +97,14 @@
 }
 
 /* =====================================
-   Games Carousel Section - White
+   Games Carousel Section
 ===================================== */
 
 .games-section {
-  background: #ffffff;
-  border-radius: 0 0 20px 20px;
-  padding: 24px 32px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  margin-top: 0;
-  border-top: 1px solid #e0e0e0;
 }
 
 .section-title {
@@ -209,7 +207,6 @@
   grid-template-columns: 1fr 320px;
   gap: 32px;
   align-items: start;
-  margin-top: 32px;
 }
 
 /* =====================================
@@ -243,6 +240,8 @@
   box-shadow: 0 20px 40px rgba(232, 93, 4, 0.15);
   border-color: rgba(232, 93, 4, 0.1);
 }
+
+/* Removed .card.featured and .card-badge styles - now all cards look the same */
 
 .card h1 {
   font-size: 22px;
@@ -288,6 +287,7 @@
   flex-direction: column;
   border: 1px solid transparent;
   transition: all 0.3s ease;
+  /* Height is set dynamically via [style.height.px] */
 }
 
 .live-feed:hover {
@@ -336,6 +336,7 @@
   font-weight: 600;
 }
 
+/* Scrollable container with fade effect */
 .feed-scroll-container {
   position: relative;
   flex: 1;
@@ -367,6 +368,7 @@
   border-radius: 3px;
 }
 
+/* Fade out effect at bottom */
 .feed-fade {
   position: absolute;
   bottom: 0;
@@ -457,7 +459,7 @@
 }
 
 .pull-rarity.legendary {
-  background: #ffd700;
+  background: linear-gradient(90deg, #ffd700, #ffaa00);
   color: #744210;
 }
 
@@ -477,7 +479,7 @@
   }
 
   .live-feed {
-    height: 400px !important;
+    height: 400px !important; /* Override dynamic height on mobile */
   }
 }
 
@@ -496,60 +498,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-.card:nth-child(1) {
-  background: #fdf2f2;
-}
-
-.card:nth-child(1) h1 {
-  color: #c0392b;
-}
-
-.card:nth-child(1) p {
-  color: #666;
-}
-
-.card:nth-child(1):hover {
-  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
-}
-
-.card:nth-child(2) {
-  background: #fef5f0;
-}
-
-.card:nth-child(2) h1 {
-  color: #d35400;
-}
-
-.card:nth-child(2) p {
-  color: #666;
-}
-
-.card:nth-child(2):hover {
-  box-shadow: 0 8px 25px rgba(230, 126, 34, 0.15);
-}
-
-.card:nth-child(3) {
-  background: #fefcf3;
-}
-
-.card:nth-child(3) h1 {
-  color: #b7950b;
-}
-
-.card:nth-child(3) p {
-  color: #666;
-}
-
-.card:nth-child(3):hover {
-  border-left-color: #ffd93d;
-  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15);
-}
-
-.card-footer span {
-  color: #666;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-
-
