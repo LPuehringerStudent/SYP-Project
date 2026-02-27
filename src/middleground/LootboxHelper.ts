@@ -11,8 +11,8 @@ export class LootBoxHelper {
     private pool: LootItem[] = [
         { name: 'Common', color: '#b3e5fc', weight: 50 },
         { name: 'Uncommon', color: '#81c784', weight: 30 },
-        { name: 'Rare', color: '#ba68c8', weight: 15 },
-        { name: 'Epic', color: '#ffcc80', weight: 4 },
+        { name: 'Rare', color: '#332eca', weight: 15 },
+        { name: 'Epic', color: '#8e05a6', weight: 4 },
         { name: 'Legendary', color: '#ff8a80', weight: 1 }
     ];
 

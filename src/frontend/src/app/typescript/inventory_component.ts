@@ -3,7 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import {NgForOf, NgIf} from '@angular/common';
 import { StoveApiService } from '../../services/stove';
 import {forkJoin, map, of, Subscription, switchMap} from 'rxjs';
-import {Rarity, ShowedStove, Stove} from '../../../../shared/model';
+import {Rarity, ShowedStove, Stove, StoveRow} from '../../../../shared/model';
 
 interface InventoryLootbox {
   count: number;
@@ -51,15 +51,14 @@ export class InventoryComponent implements OnInit {
   }
   getItems(): void {
     const sub = this._stove.getStoves(1).pipe(
-      switchMap((stoves: Stove[]) => {
+      switchMap((stoves: StoveRow[]) => {
         if (stoves.length === 0) return of([]);
 
         return forkJoin(
-          stoves.map((stove, index) =>
+          stoves.map((stove) =>
             this._stove.checkRarity(stove.typeId).pipe(
               map(rarity => ({
                 ...stove,
-                stoveId: index + 1,
                 rarity,
                 StoveName: this.getStoveName(stove.typeId) // ✅ Add this
               }))
