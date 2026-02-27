@@ -40,8 +40,14 @@ export interface Stove {
     mintedAt: Date;
 }
 
+
 export interface StoveRow extends Stove {
     stoveId: number;
+}
+
+export interface ShowedStove extends StoveRow {
+    StoveName: string;
+    rarity: Rarity;
 }
 
 // LootboxType

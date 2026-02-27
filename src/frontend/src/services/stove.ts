@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Observable, Subject, tap} from 'rxjs';
+import {map, Observable, Subject, tap} from 'rxjs';
+import {Rarity} from '../../../shared/model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,14 @@ constructor(private http: HttpClient) {}
     );
   }
 
+  checkRarity(typeId: number): Observable<Rarity> {
+    return this.http.get<{ rarity: Rarity }>(`${this.apiUrl}/stove-types/${typeId}`).pipe(
+      map(response => response.rarity)  // Extract just the rarity string
+    );
+  }
+  getStoveName(typeId:number){
+  return this.http.get<{name:String}>(`${this.apiUrl}/stove-types/${typeId}`).pipe()
+  }
 
 getStoves(ownerId: number): Observable<any> {
   // This hits: GET http://localhost:3000/api/players/{ownerId}/stoves
