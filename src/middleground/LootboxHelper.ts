@@ -9,8 +9,8 @@ export interface LootItem {
 
 export class LootBoxHelper {
     private pool: LootItem[] = [
-        { name: 'Common', color: '#b3e5fc', weight: 50 },
-        { name: 'Rare', color: '#332eca', weight: 30 },
+        { name: 'Common', color: 'rgba(179,229,252,0.45)', weight: 50 },
+        { name: 'Rare', color: '#2ecaca', weight: 30 },
         { name: 'Epic', color: '#8e05a6', weight: 15 },
         { name: 'Legendary', color: '#ff8a80', weight: 5 }
     ];
