@@ -25,10 +25,10 @@
     <div class="inventory-header">
       <h1>{{ activeTab === 'lootboxes' ? 'Lootboxes' : 'Items' }}</h1>
       <span class="hint">
-    {{ activeTab === 'lootboxes'
+        {{ activeTab === 'lootboxes'
         ? 'Your stored lootboxes'
         : 'Your collected items' }}
-  </span>
+      </span>
     </div>
 
     <!-- Grid -->
@@ -56,25 +56,20 @@
         <button class="action-btn" routerLink="/lootboxes">Open a Lootbox</button>
       </div>
 
-      <!-- FUTURE: Lootbox slots -->
-      <!--
-      <div
-        class="inventory-slot"
-        *ngFor="let box of lootboxes"
-        *ngIf="activeTab === 'lootboxes'">
-        ...
-      </div>
-      -->
+      <!-- ITEMS LIST -->
+      <ng-container *ngIf="activeTab === 'items' && items.length > 0">
+        <div class="inventory-slot" *ngFor="let item of items">
 
-      <!-- FUTURE: Item slots -->
-      <!--
-      <div
-        class="inventory-slot"
-        *ngFor="let item of items"
-        *ngIf="activeTab === 'items'">
-        ...
-      </div>
-      -->
+          <div class="slot-icon">🔥</div>
+
+          <div class="slot-info">
+            <h4>{{item.name || 'Stove #' + item.id}}</h4>
+            <p>Type: {{item.typeId}}</p>
+            <p>Owner: {{item.currentOwnerId}}</p>
+          </div>
+
+        </div>
+      </ng-container>
 
     </div>
 
