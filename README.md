@@ -50,8 +50,8 @@ EmberExchange is a full-stack web application where players can:
 
 | Version | Status | Expected Date |
 |:-------:|:------:|:-------------:|
-| `0.0.0` | ✅ Current | — |
-| `0.1.0` | 🚧 In Progress | **27.02.2026** |
+| `0.1.0` | ✅ Current | — |
+| `0.2.0` | 🚧 In Progress | **20.03.2026** |
 
 ## Project Structure
 
