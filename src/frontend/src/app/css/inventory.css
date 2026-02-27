@@ -460,7 +460,7 @@
 }
 
 .action-btn {
-  background: #4a9eff;
+  background: #ff894a;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -473,5 +473,5 @@
 }
 
 .action-btn:hover {
-  background: #3d8be6;
+  background: #d87644;
 }
