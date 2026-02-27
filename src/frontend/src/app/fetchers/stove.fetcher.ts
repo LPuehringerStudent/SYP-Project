@@ -32,8 +32,15 @@ export async function getAllStoves(): Promise<Stove[]> {
   const response = await fetch(`${API_BASE_URL}/stoves`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stoves: ${response.status}`);
+    let errorMessage = `Failed to fetch stoves: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Stove[];
@@ -46,8 +53,15 @@ export async function getStoveById(id: number): Promise<Stove> {
   const response = await fetch(`${API_BASE_URL}/stoves/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stove ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch stove ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Stove;
@@ -60,8 +74,15 @@ export async function getStovesByPlayerId(playerId: number): Promise<Stove[]> {
   const response = await fetch(`${API_BASE_URL}/players/${playerId}/stoves`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stoves for player ${playerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch stoves for player ${playerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Stove[];
@@ -74,8 +95,15 @@ export async function getStovesByTypeId(typeId: number): Promise<Stove[]> {
   const response = await fetch(`${API_BASE_URL}/stove-types/${typeId}/stoves`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stoves for type ${typeId}: ${response.status}`);
+    let errorMessage = `Failed to fetch stoves for type ${typeId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Stove[];
@@ -97,8 +125,15 @@ export async function createStove(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create stove: ${response.status}`);
+    let errorMessage = `Failed to create stove: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateStoveResponse;
@@ -117,8 +152,15 @@ export async function transferStoveOwnership(id: number, newOwnerId: number): Pr
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to transfer stove ownership: ${response.status}`);
+    let errorMessage = `Failed to transfer stove ownership: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -133,8 +175,15 @@ export async function deleteStove(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete stove: ${response.status}`);
+    let errorMessage = `Failed to delete stove: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -147,8 +196,15 @@ export async function countStovesByPlayer(playerId: number): Promise<CountRespon
   const response = await fetch(`${API_BASE_URL}/players/${playerId}/stoves/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count stoves for player ${playerId}: ${response.status}`);
+    let errorMessage = `Failed to count stoves for player ${playerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;
@@ -161,8 +217,15 @@ export async function countStovesByType(typeId: number): Promise<CountResponse> 
   const response = await fetch(`${API_BASE_URL}/stove-types/${typeId}/stoves/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count stoves for type ${typeId}: ${response.status}`);
+    let errorMessage = `Failed to count stoves for type ${typeId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;

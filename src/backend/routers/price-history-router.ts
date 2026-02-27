@@ -229,12 +229,7 @@ priceHistoryRouter.post("/price-history", (req, res) => {
             return;
         }
 
-        if (salePrice < 0) {
-            res.status(StatusCodes.BAD_REQUEST).json({ error: "salePrice must be non-negative" });
-            return;
-        }
-
-        if (salePrice === 0) {
+        if (salePrice <= 0) {
             res.status(StatusCodes.BAD_REQUEST).json({ error: "salePrice must be positive" });
             return;
         }

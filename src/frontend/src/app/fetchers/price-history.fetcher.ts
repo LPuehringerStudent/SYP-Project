@@ -35,8 +35,15 @@ export async function getAllPriceHistory(): Promise<PriceHistory[]> {
   const response = await fetch(`${API_BASE_URL}/price-history`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch price history: ${response.status}`);
+    let errorMessage = `Failed to fetch price history: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as PriceHistory[];
@@ -49,8 +56,15 @@ export async function getPriceHistoryById(id: number): Promise<PriceHistory> {
   const response = await fetch(`${API_BASE_URL}/price-history/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch price history ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch price history ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as PriceHistory;
@@ -63,8 +77,15 @@ export async function getPriceHistoryByTypeId(typeId: number): Promise<PriceHist
   const response = await fetch(`${API_BASE_URL}/stove-types/${typeId}/price-history`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch price history for type ${typeId}: ${response.status}`);
+    let errorMessage = `Failed to fetch price history for type ${typeId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as PriceHistory[];
@@ -83,8 +104,15 @@ export async function recordSale(typeId: number, salePrice: number): Promise<Rec
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to record sale: ${response.status}`);
+    let errorMessage = `Failed to record sale: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as RecordSaleResponse;
@@ -97,8 +125,15 @@ export async function getPriceStats(typeId: number): Promise<PriceStatsResponse>
   const response = await fetch(`${API_BASE_URL}/stove-types/${typeId}/price-stats`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch price stats for type ${typeId}: ${response.status}`);
+    let errorMessage = `Failed to fetch price stats for type ${typeId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as PriceStatsResponse;
@@ -115,8 +150,15 @@ export async function getRecentPrices(typeId: number, limit?: number): Promise<P
   const response = await fetch(url);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch recent prices for type ${typeId}: ${response.status}`);
+    let errorMessage = `Failed to fetch recent prices for type ${typeId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as PriceHistory[];
@@ -131,8 +173,15 @@ export async function deletePriceHistory(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete price history record: ${response.status}`);
+    let errorMessage = `Failed to delete price history record: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;

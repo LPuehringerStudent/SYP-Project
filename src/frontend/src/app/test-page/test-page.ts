@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -84,12 +84,13 @@ interface ApiEndpoint {
   template: `
     <div class="test-page">
       <header class="page-header">
-        <h1>🔧 API Test Console</h1>
-        <p class="subtitle">Test all backend endpoints with live feedback</p>
+        <div class="header-content">
+          <h1>API Test Console</h1>
+          <p class="subtitle">Test all backend endpoints with live feedback</p>
+        </div>
       </header>
 
       <div class="main-layout">
-        <!-- Sidebar with categories -->
         <aside class="sidebar">
           <div class="search-box">
             <input 
@@ -107,7 +108,14 @@ interface ApiEndpoint {
               <button class="category-header" (click)="toggleCategory(category)">
                 <span class="category-icon">{{ category.icon }}</span>
                 <span class="category-name">{{ category.name }}</span>
-                <span class="toggle-icon">{{ category.expanded ? '▼' : '▶' }}</span>
+                <span class="toggle-icon">
+                  <svg *ngIf="!category.expanded" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <svg *ngIf="category.expanded" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
               </button>
               
               <div class="endpoint-list" *ngIf="category.expanded">
@@ -118,22 +126,27 @@ interface ApiEndpoint {
                   (click)="runTest(endpoint)"
                   [title]="endpoint.description">
                   <span class="btn-text">{{ endpoint.name }}</span>
-                  <span class="spinner" *ngIf="runningEndpoint === endpoint.label">⟳</span>
+                  <span class="spinner" *ngIf="runningEndpoint === endpoint.label">
+                    <svg width="14" height="14" viewBox="0 0 14 14">
+                      <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="20" stroke-dashoffset="10">
+                        <animateTransform attributeName="transform" type="rotate" from="0 7 7" to="360 7 7" dur="1s" repeatCount="indefinite"/>
+                      </circle>
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>
           </div>
         </aside>
 
-        <!-- Results panel -->
         <main class="results-panel">
           <div class="panel-header">
             <h2>Response</h2>
             <div class="actions">
-              <button class="action-btn" (click)="clearResults()" [disabled]="results.length === 0">
+              <button class="action-btn secondary" (click)="clearResults()" [disabled]="results.length === 0">
                 Clear All
               </button>
-              <button class="action-btn" (click)="copyLastResult()" [disabled]="!lastResult">
+              <button class="action-btn primary" (click)="copyLastResult()" [disabled]="!lastResult">
                 Copy Last
               </button>
             </div>
@@ -147,14 +160,23 @@ interface ApiEndpoint {
               [class.error]="!result.success">
               <div class="result-header">
                 <span class="badge" [class.success]="result.success" [class.error]="!result.success">
-                  {{ result.success ? '✓' : '✗' }}
+                  <svg *ngIf="result.success" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <svg *ngIf="!result.success" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
                 </span>
                 <span class="endpoint-name">{{ result.endpoint }}</span>
                 <span class="timestamp">{{ result.timestamp }}</span>
                 <span class="duration" [class.fast]="result.duration < 100" [class.slow]="result.duration > 500">
                   {{ result.duration }}ms
                 </span>
-                <button class="delete-btn" (click)="removeResult(i)">×</button>
+                <button class="delete-btn" (click)="removeResult(i)" title="Remove">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </button>
               </div>
               <div class="result-body">
                 <pre *ngIf="result.success">{{ result.data | json }}</pre>
@@ -164,7 +186,12 @@ interface ApiEndpoint {
           </div>
 
           <div class="empty-state" *ngIf="results.length === 0">
-            <div class="empty-icon">📡</div>
+            <div class="empty-icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 24L32 38L56 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <p>Click any endpoint button to see results here</p>
           </div>
         </main>
@@ -175,38 +202,51 @@ interface ApiEndpoint {
     .test-page {
       min-height: 100vh;
       background: #f5f7fa;
+      color: #333;
     }
 
     .page-header {
-      background: linear-gradient(135deg, #e85d04 0%, #d00000 100%);
-      color: white;
+      background: #e85d04;
       padding: 24px 32px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
     .page-header h1 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
+      margin: 0 0 4px 0;
+      font-size: 24px;
       font-weight: 600;
+      color: #fff;
     }
 
     .subtitle {
       margin: 0;
-      opacity: 0.9;
+      color: rgba(255,255,255,0.9);
       font-size: 14px;
     }
 
     .main-layout {
       display: flex;
-      height: calc(100vh - 100px);
+      height: calc(100vh - 85px);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 24px;
     }
 
     .sidebar {
-      width: 320px;
-      background: white;
-      border-right: 1px solid #e0e0e0;
+      width: 280px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       overflow-y: auto;
-      padding: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
     .search-box {
@@ -216,15 +256,23 @@ interface ApiEndpoint {
     .search-input {
       width: 100%;
       padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      background: #f8f9fc;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
       font-size: 14px;
-      transition: border-color 0.2s;
+      color: #333;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+
+    .search-input::placeholder {
+      color: #999;
     }
 
     .search-input:focus {
       outline: none;
       border-color: #e85d04;
+      box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.1);
     }
 
     .category-list {
@@ -234,31 +282,58 @@ interface ApiEndpoint {
     }
 
     .category-item {
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      border: 1px solid #e0e0e0;
+      border: 1px solid #f0f0f0;
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .category-item:hover {
+      border-color: #e0e0e0;
+    }
+
+    .category-item.expanded {
+      border-color: #e85d04;
+      box-shadow: 0 2px 8px rgba(232, 93, 4, 0.08);
     }
 
     .category-header {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      background: #f8f9fa;
+      gap: 12px;
+      padding: 12px 14px;
+      background: transparent;
       border: none;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      transition: background 0.2s;
+      color: #555;
+      transition: all 0.2s;
     }
 
     .category-header:hover {
-      background: #e9ecef;
+      color: #e85d04;
     }
 
     .category-icon {
-      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fc;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #666;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .category-item.expanded .category-icon {
+      background: #e85d04;
+      color: #fff;
     }
 
     .category-name {
@@ -267,16 +342,19 @@ interface ApiEndpoint {
     }
 
     .toggle-icon {
-      font-size: 10px;
-      color: #666;
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .endpoint-list {
       padding: 8px;
-      background: white;
+      background: #fafafa;
       display: flex;
       flex-direction: column;
       gap: 4px;
+      border-top: 1px solid #f0f0f0;
     }
 
     .endpoint-btn {
@@ -284,23 +362,27 @@ interface ApiEndpoint {
       align-items: center;
       justify-content: space-between;
       padding: 10px 12px;
-      background: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
+      background: #fff;
+      border: 1px solid transparent;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
-      transition: all 0.2s;
+      color: #666;
+      transition: all 0.15s;
       text-align: left;
     }
 
     .endpoint-btn:hover {
-      background: #f0f4ff;
+      background: #fff;
       border-color: #e85d04;
+      color: #e85d04;
+      box-shadow: 0 2px 6px rgba(232, 93, 4, 0.1);
     }
 
     .endpoint-btn.running {
-      background: #fff3cd;
-      border-color: #ffc107;
+      background: #fff8f5;
+      border-color: #e85d04;
+      color: #e85d04;
     }
 
     .btn-text {
@@ -308,16 +390,16 @@ interface ApiEndpoint {
     }
 
     .spinner {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      display: flex;
+      align-items: center;
+      color: #e85d04;
     }
 
     .results-panel {
       flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       padding: 24px;
       overflow-y: auto;
     }
@@ -327,11 +409,14 @@ interface ApiEndpoint {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .panel-header h2 {
       margin: 0;
-      font-size: 20px;
+      font-size: 18px;
+      font-weight: 600;
       color: #333;
     }
 
@@ -342,44 +427,67 @@ interface ApiEndpoint {
 
     .action-btn {
       padding: 8px 16px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
+      font-weight: 500;
       transition: all 0.2s;
+      border: 1px solid transparent;
     }
 
-    .action-btn:hover:not(:disabled) {
-      background: #f0f4ff;
-      border-color: #e85d04;
+    .action-btn.secondary {
+      background: transparent;
+      border-color: #e0e0e0;
+      color: #666;
+    }
+
+    .action-btn.secondary:hover:not(:disabled) {
+      background: #f8f9fc;
+      border-color: #ccc;
+      color: #333;
+    }
+
+    .action-btn.primary {
+      background: #e85d04;
+      color: white;
+    }
+
+    .action-btn.primary:hover:not(:disabled) {
+      background: #d35400;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
     }
 
     .action-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     .results-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .result-card {
-      background: white;
+      background: #fff;
       border-radius: 12px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid #f0f0f0;
       overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+
+    .result-card:hover {
+      border-color: #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     .result-card.success {
-      border-left: 4px solid #28a745;
+      border-left: 3px solid #27ae60;
     }
 
     .result-card.error {
-      border-left: 4px solid #dc3545;
+      border-left: 3px solid #e74c3c;
     }
 
     .result-header {
@@ -387,19 +495,18 @@ interface ApiEndpoint {
       align-items: center;
       gap: 12px;
       padding: 12px 16px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .badge {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
-      font-size: 12px;
-      font-weight: bold;
+      border-radius: 6px;
+      flex-shrink: 0;
     }
 
     .badge.success {
@@ -416,19 +523,24 @@ interface ApiEndpoint {
       flex: 1;
       font-weight: 500;
       color: #333;
+      font-size: 13px;
+      font-family: 'SF Mono', Monaco, monospace;
     }
 
     .timestamp {
       font-size: 12px;
-      color: #666;
+      color: #999;
+      font-family: 'SF Mono', Monaco, monospace;
     }
 
     .duration {
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
       padding: 2px 8px;
       border-radius: 4px;
-      background: #e9ecef;
+      font-family: 'SF Mono', Monaco, monospace;
+      background: #f0f0f0;
+      color: #666;
     }
 
     .duration.fast {
@@ -442,23 +554,22 @@ interface ApiEndpoint {
     }
 
     .delete-btn {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: none;
+      background: transparent;
       border: none;
       cursor: pointer;
-      font-size: 18px;
-      color: #999;
-      border-radius: 4px;
+      color: #ccc;
+      border-radius: 6px;
       transition: all 0.2s;
     }
 
     .delete-btn:hover {
-      background: #f8d7da;
-      color: #dc3545;
+      background: #fee;
+      color: #e74c3c;
     }
 
     .result-body {
@@ -468,17 +579,20 @@ interface ApiEndpoint {
     .result-body pre {
       margin: 0;
       padding: 16px;
-      background: #f8f9fa;
+      background: #f8f9fc;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 12px;
       overflow-x: auto;
       max-height: 400px;
       overflow-y: auto;
+      color: #333;
+      font-family: 'SF Mono', Monaco, monospace;
+      line-height: 1.5;
     }
 
     .error-text {
-      color: #dc3545;
-      background: #f8d7da !important;
+      color: #e74c3c !important;
+      background: #fdf2f2 !important;
     }
 
     .empty-state {
@@ -487,17 +601,17 @@ interface ApiEndpoint {
       align-items: center;
       justify-content: center;
       height: 400px;
-      color: #666;
+      color: #999;
     }
 
     .empty-icon {
-      font-size: 64px;
       margin-bottom: 16px;
-      opacity: 0.5;
+      opacity: 0.4;
     }
 
     .empty-state p {
-      font-size: 16px;
+      font-size: 14px;
+      margin: 0;
     }
   `]
 })
@@ -507,35 +621,37 @@ export class TestPageComponent {
   results: TestResult[] = [];
   lastResult: TestResult | null = null;
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   categories: ApiCategory[] = [
     {
       name: 'Player',
-      icon: '👤',
+      icon: 'PL',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllPlayers(), label: 'getAllPlayers()', description: 'Fetch all players' },
         { name: 'Get by ID', method: () => getPlayerById(1), label: 'getPlayerById(1)', description: 'Fetch player #1' },
-        { name: 'Create', method: () => createPlayer('test_' + Date.now()), label: 'createPlayer()', description: 'Create new test player' },
+        { name: 'Create', method: () => createPlayer('test_' + Date.now(), 'pass123', 'test@example.com'), label: 'createPlayer()', description: 'Create new test player' },
         { name: 'Update Coins', method: () => updatePlayerCoins(1, 999), label: 'updatePlayerCoins(1, 999)', description: 'Set player coins to 999' },
         { name: 'Update Lootboxes', method: () => updatePlayerLootboxCount(1, 5), label: 'updatePlayerLootboxCount(1, 5)', description: 'Set lootbox count' },
-        { name: 'Delete', method: () => deletePlayer(999), label: 'deletePlayer(999)', description: 'Delete player #999 (may fail)' }
+        { name: 'Delete', method: () => deletePlayer(1), label: 'deletePlayer(1)', description: 'Delete player #1' }
       ]
     },
     {
       name: 'Lootbox',
-      icon: '🎁',
+      icon: 'LB',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllLootboxes(), label: 'getAllLootboxes()', description: 'Fetch all lootboxes' },
         { name: 'Get by ID', method: () => getLootboxById(1), label: 'getLootboxById(1)', description: 'Fetch lootbox #1' },
         { name: 'Get by Player', method: () => getLootboxesByPlayerId(1), label: 'getLootboxesByPlayerId(1)', description: 'Fetch player #1 lootboxes' },
         { name: 'Create', method: () => createLootbox(1, 1, 'free'), label: 'createLootbox(1, 1, free)', description: 'Create free lootbox' },
-        { name: 'Delete', method: () => deleteLootbox(999), label: 'deleteLootbox(999)', description: 'Delete lootbox #999' }
+        { name: 'Delete', method: () => deleteLootbox(1), label: 'deleteLootbox(1)', description: 'Delete lootbox #1' }
       ]
     },
     {
       name: 'Lootbox Type',
-      icon: '📦',
+      icon: 'LT',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllLootboxTypes(), label: 'getAllLootboxTypes()', description: 'Fetch all lootbox types' },
@@ -545,7 +661,7 @@ export class TestPageComponent {
     },
     {
       name: 'Lootbox Drop',
-      icon: '🎲',
+      icon: 'LD',
       expanded: false,
       endpoints: [
         { name: 'Get by Lootbox', method: () => getDropsByLootboxId(1), label: 'getDropsByLootboxId(1)', description: 'Fetch drops for lootbox #1' },
@@ -554,7 +670,7 @@ export class TestPageComponent {
     },
     {
       name: 'Stove Type',
-      icon: '🔥',
+      icon: 'ST',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllStoveTypes(), label: 'getAllStoveTypes()', description: 'Fetch all stove types' },
@@ -563,13 +679,13 @@ export class TestPageComponent {
         { name: 'Create', method: () => createStoveType('Test_' + Date.now(), '/img.png', Rarity.COMMON, 10), label: 'createStoveType()', description: 'Create new stove type' },
         { name: 'Update Weight', method: () => updateStoveTypeWeight(1, 20), label: 'updateStoveTypeWeight(1, 20)', description: 'Update drop weight' },
         { name: 'Update Image', method: () => updateStoveTypeImage(1, '/new.png'), label: 'updateStoveTypeImage(1, /new.png)', description: 'Update image URL' },
-        { name: 'Delete', method: () => deleteStoveType(999), label: 'deleteStoveType(999)', description: 'Delete stove type #999' },
+        { name: 'Delete', method: () => deleteStoveType(1), label: 'deleteStoveType(1)', description: 'Delete stove type #1' },
         { name: 'Total Weight', method: () => getTotalLootboxWeight(), label: 'getTotalLootboxWeight()', description: 'Get total drop weight' }
       ]
     },
     {
       name: 'Stove',
-      icon: '🍳',
+      icon: 'SV',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllStoves(), label: 'getAllStoves()', description: 'Fetch all stoves' },
@@ -578,14 +694,14 @@ export class TestPageComponent {
         { name: 'Get by Type', method: () => getStovesByTypeId(1), label: 'getStovesByTypeId(1)', description: 'Fetch stoves of type #1' },
         { name: 'Create', method: () => createStove(1, 1), label: 'createStove(1, 1)', description: 'Create new stove' },
         { name: 'Transfer', method: () => transferStoveOwnership(1, 2), label: 'transferStoveOwnership(1, 2)', description: 'Transfer stove #1 to player #2' },
-        { name: 'Delete', method: () => deleteStove(999), label: 'deleteStove(999)', description: 'Delete stove #999' },
+        { name: 'Delete', method: () => deleteStove(1), label: 'deleteStove(1)', description: 'Delete stove #1' },
         { name: 'Count by Player', method: () => countStovesByPlayer(1), label: 'countStovesByPlayer(1)', description: 'Count player #1 stoves' },
         { name: 'Count by Type', method: () => countStovesByType(1), label: 'countStovesByType(1)', description: 'Count stoves of type #1' }
       ]
     },
     {
       name: 'Ownership',
-      icon: '📋',
+      icon: 'OW',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllOwnerships(), label: 'getAllOwnerships()', description: 'Fetch all ownership records' },
@@ -594,14 +710,14 @@ export class TestPageComponent {
         { name: 'Get by Player', method: () => getOwnershipsByPlayerId(1), label: 'getOwnershipsByPlayerId(1)', description: 'Fetch player #1 ownerships' },
         { name: 'Create', method: () => createOwnership(1, 1, 'lootbox'), label: 'createOwnership(1, 1, lootbox)', description: 'Create ownership record' },
         { name: 'Get Current', method: () => getCurrentOwner(1), label: 'getCurrentOwner(1)', description: 'Get current owner of stove #1' },
-        { name: 'Delete', method: () => deleteOwnership(999), label: 'deleteOwnership(999)', description: 'Delete ownership #999' },
+        { name: 'Delete', method: () => deleteOwnership(1), label: 'deleteOwnership(1)', description: 'Delete ownership #1' },
         { name: 'Count Changes', method: () => countOwnershipChanges(1), label: 'countOwnershipChanges(1)', description: 'Count ownership changes for stove' },
         { name: 'Count Acquired', method: () => countStovesAcquiredByPlayer(1), label: 'countStovesAcquiredByPlayer(1)', description: 'Count stoves acquired by player' }
       ]
     },
     {
       name: 'Price History',
-      icon: '💰',
+      icon: 'PH',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllPriceHistory(), label: 'getAllPriceHistory()', description: 'Fetch all price history' },
@@ -610,12 +726,12 @@ export class TestPageComponent {
         { name: 'Record Sale', method: () => recordSale(1, 5000), label: 'recordSale(1, 5000)', description: 'Record sale of 5000 coins' },
         { name: 'Get Stats', method: () => getPriceStats(1), label: 'getPriceStats(1)', description: 'Get price statistics' },
         { name: 'Get Recent', method: () => getRecentPrices(1, 5), label: 'getRecentPrices(1, 5)', description: 'Get 5 recent prices' },
-        { name: 'Delete', method: () => deletePriceHistory(999), label: 'deletePriceHistory(999)', description: 'Delete price history #999' }
+        { name: 'Delete', method: () => deletePriceHistory(1), label: 'deletePriceHistory(1)', description: 'Delete price history #1' }
       ]
     },
     {
       name: 'Listing',
-      icon: '📜',
+      icon: 'LS',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllListings(), label: 'getAllListings()', description: 'Fetch all listings' },
@@ -627,13 +743,13 @@ export class TestPageComponent {
         { name: 'Create', method: () => createListing(1, 1, 1000), label: 'createListing(1, 1, 1000)', description: 'Create listing for 1000 coins' },
         { name: 'Update Price', method: () => updateListingPrice(1, 2000), label: 'updateListingPrice(1, 2000)', description: 'Update price to 2000' },
         { name: 'Cancel', method: () => cancelListing(1), label: 'cancelListing(1)', description: 'Cancel listing #1' },
-        { name: 'Delete', method: () => deleteListing(999), label: 'deleteListing(999)', description: 'Delete listing #999' },
+        { name: 'Delete', method: () => deleteListing(1), label: 'deleteListing(1)', description: 'Delete listing #1' },
         { name: 'Count', method: () => countActiveListingsBySeller(1), label: 'countActiveListingsBySeller(1)', description: 'Count active listings' }
       ]
     },
     {
       name: 'Trade',
-      icon: '💱',
+      icon: 'TR',
       expanded: false,
       endpoints: [
         { name: 'Get All', method: () => getAllTrades(), label: 'getAllTrades()', description: 'Fetch all trades' },
@@ -642,7 +758,7 @@ export class TestPageComponent {
         { name: 'Get by Buyer', method: () => getTradesByBuyerId(1), label: 'getTradesByBuyerId(1)', description: 'Fetch trades by buyer #1' },
         { name: 'Execute', method: () => executeTrade(1, 2), label: 'executeTrade(1, 2)', description: 'Execute trade (listing #1, buyer #2)' },
         { name: 'Get Recent', method: () => getRecentTrades(5), label: 'getRecentTrades(5)', description: 'Get 5 recent trades' },
-        { name: 'Delete', method: () => deleteTrade(999), label: 'deleteTrade(999)', description: 'Delete trade #999' },
+        { name: 'Delete', method: () => deleteTrade(1), label: 'deleteTrade(1)', description: 'Delete trade #1' },
         { name: 'Count All', method: () => countTrades(), label: 'countTrades()', description: 'Count all trades' },
         { name: 'Count by Buyer', method: () => countTradesByBuyer(1), label: 'countTradesByBuyer(1)', description: 'Count trades by buyer' }
       ]
@@ -675,7 +791,7 @@ export class TestPageComponent {
     const startTime = performance.now();
     
     try {
-      console.log(`Calling: ${endpoint.label}`);
+
       const result = await endpoint.method();
       const duration = Math.round(performance.now() - startTime);
       
@@ -689,7 +805,8 @@ export class TestPageComponent {
       
       this.results.unshift(testResult);
       this.lastResult = testResult;
-      console.log('Success:', result);
+      this.cdr.detectChanges();
+
     } catch (err) {
       const duration = Math.round(performance.now() - startTime);
       
@@ -697,15 +814,17 @@ export class TestPageComponent {
         timestamp: new Date().toLocaleTimeString(),
         endpoint: endpoint.label,
         success: false,
-        error: String(err),
+        error: err instanceof Error ? err.message : String(err),
         duration
       };
       
       this.results.unshift(testResult);
       this.lastResult = testResult;
-      console.error('Error:', err);
+      this.cdr.detectChanges();
+
     } finally {
       this.runningEndpoint = null;
+      this.cdr.detectChanges();
     }
   }
 

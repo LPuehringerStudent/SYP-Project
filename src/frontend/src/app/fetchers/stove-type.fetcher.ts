@@ -33,8 +33,15 @@ export async function getAllStoveTypes(): Promise<StoveType[]> {
   const response = await fetch(`${API_BASE_URL}/stove-types`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stove types: ${response.status}`);
+    let errorMessage = `Failed to fetch stove types: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as StoveType[];
@@ -47,8 +54,15 @@ export async function getStoveTypeById(id: number): Promise<StoveType> {
   const response = await fetch(`${API_BASE_URL}/stove-types/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stove type ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch stove type ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as StoveType;
@@ -61,8 +75,15 @@ export async function getStoveTypesByRarity(rarity: Rarity): Promise<StoveType[]
   const response = await fetch(`${API_BASE_URL}/stove-types/rarity/${rarity}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch stove types by rarity ${rarity}: ${response.status}`);
+    let errorMessage = `Failed to fetch stove types by rarity ${rarity}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as StoveType[];
@@ -86,8 +107,15 @@ export async function createStoveType(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create stove type: ${response.status}`);
+    let errorMessage = `Failed to create stove type: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateStoveTypeResponse;
@@ -106,8 +134,15 @@ export async function updateStoveTypeWeight(id: number, lootboxWeight: number): 
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to update stove type weight: ${response.status}`);
+    let errorMessage = `Failed to update stove type weight: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -126,8 +161,15 @@ export async function updateStoveTypeImage(id: number, imageUrl: string): Promis
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to update stove type image: ${response.status}`);
+    let errorMessage = `Failed to update stove type image: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -142,8 +184,15 @@ export async function deleteStoveType(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete stove type: ${response.status}`);
+    let errorMessage = `Failed to delete stove type: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -156,8 +205,15 @@ export async function getTotalLootboxWeight(): Promise<TotalWeightResponse> {
   const response = await fetch(`${API_BASE_URL}/stove-types/weight/total`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch total lootbox weight: ${response.status}`);
+    let errorMessage = `Failed to fetch total lootbox weight: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as TotalWeightResponse;

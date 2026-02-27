@@ -77,7 +77,9 @@ export class LootboxComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
   saveLoot(typeId: number) {
-    this.stoveApi.createStove(typeId, 1).subscribe();
+    this.stoveApi.createStove(typeId, 1).subscribe({
+      error: (err) => console.error('Failed to save stove:', err)
+    });
   }
 
   resetAll(): void {

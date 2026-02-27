@@ -37,8 +37,15 @@ export async function getAllLootboxes(): Promise<Lootbox[]> {
   const response = await fetch(`${API_BASE_URL}/lootboxes`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch lootboxes: ${response.status}`);
+    let errorMessage = `Failed to fetch lootboxes: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Lootbox[];
@@ -51,8 +58,15 @@ export async function getLootboxById(id: number): Promise<Lootbox> {
   const response = await fetch(`${API_BASE_URL}/lootboxes/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch lootbox ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch lootbox ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Lootbox;
@@ -65,8 +79,15 @@ export async function getLootboxesByPlayerId(playerId: number): Promise<Lootbox[
   const response = await fetch(`${API_BASE_URL}/players/${playerId}/lootboxes`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch lootboxes for player ${playerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch lootboxes for player ${playerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Lootbox[];
@@ -89,8 +110,15 @@ export async function createLootbox(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create lootbox: ${response.status}`);
+    let errorMessage = `Failed to create lootbox: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateLootboxResponse;
@@ -105,8 +133,15 @@ export async function deleteLootbox(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete lootbox: ${response.status}`);
+    let errorMessage = `Failed to delete lootbox: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -121,8 +156,15 @@ export async function getAllLootboxTypes(): Promise<LootboxType[]> {
   const response = await fetch(`${API_BASE_URL}/lootbox-types`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch lootbox types: ${response.status}`);
+    let errorMessage = `Failed to fetch lootbox types: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as LootboxType[];
@@ -135,8 +177,15 @@ export async function getAvailableLootboxTypes(): Promise<LootboxType[]> {
   const response = await fetch(`${API_BASE_URL}/lootbox-types/available`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch available lootbox types: ${response.status}`);
+    let errorMessage = `Failed to fetch available lootbox types: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as LootboxType[];
@@ -149,8 +198,15 @@ export async function getLootboxTypeById(id: number): Promise<LootboxType> {
   const response = await fetch(`${API_BASE_URL}/lootbox-types/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch lootbox type ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch lootbox type ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as LootboxType;
@@ -165,8 +221,15 @@ export async function getDropsByLootboxId(lootboxId: number): Promise<LootboxDro
   const response = await fetch(`${API_BASE_URL}/lootboxes/${lootboxId}/drops`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch drops for lootbox ${lootboxId}: ${response.status}`);
+    let errorMessage = `Failed to fetch drops for lootbox ${lootboxId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as LootboxDrop[];
@@ -188,8 +251,15 @@ export async function createLootboxDrop(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create lootbox drop: ${response.status}`);
+    let errorMessage = `Failed to create lootbox drop: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateLootboxDropResponse;

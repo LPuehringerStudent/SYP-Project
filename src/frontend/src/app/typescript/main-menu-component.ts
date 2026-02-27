@@ -29,6 +29,7 @@ export class MainMenuComponent implements AfterViewInit, OnDestroy {
 
   cardsHeight: number = 400; // Default fallback height
   private resizeObserver: ResizeObserver | null = null;
+  private boundUpdateCardsHeight = this.updateCardsHeight.bind(this);
 
   games: Game[] = [
     { name: 'Dummy', icon: '⚠', reward: 50 },
@@ -68,14 +69,14 @@ export class MainMenuComponent implements AfterViewInit, OnDestroy {
         this.resizeObserver.observe(this.cardsGrid.nativeElement);
       }
     }, 0);
-    window.addEventListener('resize', this.updateCardsHeight.bind(this));
+    window.addEventListener('resize', this.boundUpdateCardsHeight);
   }
 
   ngOnDestroy() {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
-    window.removeEventListener('resize', this.updateCardsHeight.bind(this));
+    window.removeEventListener('resize', this.boundUpdateCardsHeight);
   }
 
   private updateCardsHeight() {
