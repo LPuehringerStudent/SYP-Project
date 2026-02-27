@@ -1,0 +1,81 @@
+name: Discord PR Notifications
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_GIT_NOTIFICATIONS }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_USER: ${{ github.event.pull_request.user.login }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_USER: ${{ github.event.comment.user.login }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+        run: |
+          # Read the user mapping from CSV
+          declare -A USER_MAP
+          while IFS=';' read -r github_user discord_id; do
+            # Skip header line
+            if [[ "$github_user" != "GithubUser" ]]; then
+              USER_MAP[$github_user]="$discord_id"
+            fi
+          done < ./github/discord_ids/githubToDiscord.csv
+
+          # Build mentions list for allowed_mentions
+          MENTIONS_ARRAY=""
+          
+          # Build the message based on event type
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            ACTION="${{ github.event.action }}"
+            case "$ACTION" in
+              "opened") ACTION_TEXT="opened" ;;
+              "synchronize") ACTION_TEXT="updated" ;;
+              "reopened") ACTION_TEXT="reopened" ;;
+              *) ACTION_TEXT="$ACTION" ;;
+            esac
+            
+            MESSAGE="🔔 **PR $ACTION_TEXT** by $PR_USER\n**$PR_TITLE**\n$PR_URL"
+          elif [[ "$EVENT_NAME" == "pull_request_review_comment" ]]; then
+            MESSAGE="💬 **PR Comment** by $COMMENT_USER:\n$COMMENT_BODY\n\n$COMMENT_URL"
+            
+            # Replace @GitHubUser with <@DiscordID> mentions
+            for gh_user in "${!USER_MAP[@]}"; do
+              if [[ "$MESSAGE" == *"@$gh_user"* ]]; then
+                discord_id="${USER_MAP[$gh_user]}"
+                MESSAGE="${MESSAGE//@$gh_user/<@$discord_id>}"
+                # Add to mentions array
+                if [[ -z "$MENTIONS_ARRAY" ]]; then
+                  MENTIONS_ARRAY="\"$discord_id\""
+                else
+                  MENTIONS_ARRAY="$MENTIONS_ARRAY, \"$discord_id\""
+                fi
+              fi
+            done
+          fi
+
+          # Build allowed_mentions JSON
+          if [[ -z "$MENTIONS_ARRAY" ]]; then
+            ALLOWED_MENTIONS='{"parse": []}'
+          else
+            ALLOWED_MENTIONS="{\"users\": [$MENTIONS_ARRAY]}"
+          fi
+
+          # Escape the message for JSON
+          MESSAGE_ESCAPED=$(echo "$MESSAGE" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()), end="')" || echo "$MESSAGE" | sed 's/"/\\"/g' | sed 's/\\n/\\\\n/g')
+
+          # Send to Discord
+          curl -H "Content-Type: application/json" \
+               -d "{\"content\": $MESSAGE_ESCAPED, \"allowed_mentions\": $ALLOWED_MENTIONS}" \
+               "$DISCORD_WEBHOOK"
