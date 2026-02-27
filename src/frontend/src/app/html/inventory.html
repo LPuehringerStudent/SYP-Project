@@ -1,0 +1,79 @@
+<div class="inventory-layout">
+
+  <!-- Sidebar -->
+  <aside class="inventory-sidebar">
+    <h2>Inventory</h2>
+
+    <button
+      class="sidebar-btn"
+      [class.active]="activeTab === 'lootboxes'"
+      (click)="activeTab = 'lootboxes'">
+      Lootboxes
+    </button>
+
+    <button
+      class="sidebar-btn"
+      [class.active]="activeTab === 'items'"
+      (click)="activeTab = 'items'">
+      Items
+    </button>
+  </aside>
+
+  <!-- Main Inventory -->
+  <section class="inventory-main">
+
+    <div class="inventory-header">
+      <h1>{{ activeTab === 'lootboxes' ? 'Lootboxes' : 'Items' }}</h1>
+      <span class="hint">
+        {{ activeTab === 'lootboxes'
+        ? 'Your stored lootboxes'
+        : 'Your collected items' }}
+      </span>
+    </div>
+
+    <!-- Grid -->
+    <div class="inventory-grid">
+
+      <!-- EMPTY: LOOTBOXES -->
+      <div
+        class="empty-state"
+        *ngIf="activeTab === 'lootboxes' && lootboxes.length === 0">
+
+        <div class="empty-icon">♨️</div>
+        <p>No lootboxes yet</p>
+        <span>Open or buy lootboxes to see them here</span>
+        <button class="action-btn" routerLink="/lootboxes">Go to Lootboxes</button>
+      </div>
+
+      <!-- EMPTY: ITEMS -->
+      <div
+        class="empty-state"
+        *ngIf="activeTab === 'items' && items.length === 0">
+
+        <div class="empty-icon">♨️</div>
+        <p>No items yet</p>
+        <span>Open lootboxes to collect items</span>
+        <button class="action-btn" routerLink="/lootboxes">Open a Lootbox</button>
+      </div>
+
+      <!-- ITEMS LIST -->
+      <ng-container *ngIf="activeTab === 'items' && items.length > 0">
+        <div class="inventory-slot" *ngFor="let item of items">
+          <div class="inventory-slot" [class]="'rarity-' + item.rarity.toLowerCase()">
+          <div class="slot-icon">🔥</div>
+          <div class="slot-info">
+            <h4>{{item.StoveName || 'Stove #' + item.stoveId}}</h4>
+            <p>{{item.typeId}}</p>
+            <p>Owner: {{item.currentOwnerId}}</p>
+            <span class="rarity-badge" [class]="item.rarity.toLowerCase()">
+      {{item.rarity}}
+            </span>
+          </div>
+        </div>
+        </div>
+      </ng-container>
+
+    </div>
+
+  </section>
+</div>

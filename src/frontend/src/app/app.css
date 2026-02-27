@@ -1,0 +1,419 @@
+/* =====================================
+   EmberExchange Theme - Warm Stove Aesthetic
+   Colors:
+   - Primary Orange: #e85d04
+   - Flame Red: #d00000
+   - Warm Gray: #f5f3f0
+   - Charcoal: #2d3436
+   - Ash Gray: #636e72
+===================================== */
+
+:root {
+  --primary-orange: #e85d04;
+  --flame-red: #d00000;
+  --warm-orange: #f48c06;
+  --light-orange: #ffba08;
+  --warm-gray: #f5f3f0;
+  --medium-gray: #e8e6e3;
+  --charcoal: #2d3436;
+  --ash-gray: #636e72;
+  --coal-black: #1a1a2e;
+  --ember-glow: rgba(232, 93, 4, 0.15);
+}
+
+/* =====================================
+   Global Reset
+===================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+body {
+  background-color: #d4d0c8;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(180, 175, 165, 0.4) 0%, transparent 25%),
+    radial-gradient(circle at 60% 20%, rgba(160, 155, 145, 0.3) 0%, transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(170, 165, 155, 0.35) 0%, transparent 22%),
+    radial-gradient(circle at 30% 70%, rgba(175, 170, 160, 0.3) 0%, transparent 18%),
+    radial-gradient(circle at 70% 80%, rgba(165, 160, 150, 0.4) 0%, transparent 24%),
+    radial-gradient(circle at 10% 50%, rgba(185, 180, 170, 0.25) 0%, transparent 15%),
+    radial-gradient(circle at 50% 40%, rgba(170, 165, 155, 0.35) 0%, transparent 20%),
+    radial-gradient(circle at 90% 10%, rgba(160, 155, 145, 0.3) 0%, transparent 18%),
+    linear-gradient(135deg, #c9c5bd 0%, #d4d0c8 25%, #cfccc4 50%, #d4d0c8 75%, #c9c5bd 100%);
+  background-size: 120px 80px, 100px 90px, 110px 70px, 90px 85px, 130px 75px, 80px 95px, 105px 80px, 95px 70px, 100% 100%;
+  color: var(--charcoal);
+  overflow-x: hidden;
+}
+
+/* =====================================
+   Topbar - Warm metallic look
+===================================== */
+
+.topbar {
+  height: 64px;
+  width: 100%;
+  background: linear-gradient(135deg, #2d3436 0%, #3d4142 50%, #2d3436 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 4px 20px rgba(232, 93, 4, 0.15);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  border-bottom: 2px solid var(--primary-orange);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  color: #fff;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+  color: var(--light-orange);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--light-orange), var(--primary-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.topbar-right span {
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: grayscale(20%);
+}
+
+.topbar-right span:hover {
+  transform: scale(1.15);
+  filter: grayscale(0%) drop-shadow(0 0 8px var(--primary-orange));
+}
+
+/* =====================================
+   Sidebar - Warm fire gradient
+===================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    #3a3530 0%, 
+    #4a453f 30%,
+    #5a554d 70%,
+    #6b4838 100%
+  );
+  padding-top: 90px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1100;
+  border-right: 3px solid var(--primary-orange);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar a {
+  display: block;
+  padding: 14px 28px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.sidebar a:hover {
+  background: linear-gradient(90deg, rgba(232, 93, 4, 0.2), transparent);
+  border-left-color: var(--primary-orange);
+  padding-left: 36px;
+  color: var(--light-orange);
+}
+
+/* =====================================
+   Overlay
+===================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 52, 54, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1050;
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* =====================================
+   Main Content
+===================================== */
+
+.content {
+  margin-top: 60px;
+  min-height: calc(100vh - 60px);
+  background: transparent;
+}
+
+/* =====================================
+   Card Grid
+===================================== */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =====================================
+   Cards - Warm stove-like appearance
+===================================== */
+
+.card {
+  background: linear-gradient(145deg, #f5f2ed 0%, #ebe7e0 100%);
+  border-radius: 16px;
+  padding: 35px 30px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(232, 93, 4, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #c9c4bb;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--flame-red), var(--primary-orange), var(--warm-orange));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card h1 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: var(--charcoal);
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--ash-gray);
+  line-height: 1.5;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 50px rgba(232, 93, 4, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-orange);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* =====================================
+   Dropdown Popup - Warm theme
+===================================== */
+
+.dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 220px;
+  background: linear-gradient(145deg, #ffffff, #faf8f5);
+  border-radius: 12px;
+  padding: 15px 0;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(232, 93, 4, 0.1);
+  border: 1px solid #e8e6e3;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  animation: dropdownFade 0.2s ease forwards;
+  z-index: 2000;
+}
+
+.dropdown.show {
+  display: flex;
+}
+
+/* Separator */
+.dropdown .separator {
+  border-top: 1px solid #e8e6e3;
+  margin: 6px 0;
+}
+
+/* List */
+.dropdown .list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 10px;
+  margin: 0;
+}
+
+/* Items */
+.dropdown .list .element {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  color: var(--charcoal);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.dropdown .list .element:hover {
+  background: linear-gradient(90deg, rgba(232, 93, 4, 0.1), transparent);
+  color: var(--primary-orange);
+  transform: translate(2px, -2px);
+}
+
+/* Active click */
+.dropdown .list .element:active {
+  transform: scale(0.98);
+}
+
+/* Logout danger */
+.dropdown .list .element.delete:hover {
+  background: linear-gradient(90deg, rgba(208, 0, 0, 0.1), transparent);
+  color: var(--flame-red);
+}
+
+/* =====================================
+   Buttons - Warm stove theme
+===================================== */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-orange), var(--flame-red));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232, 93, 4, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-orange);
+  border: 2px solid var(--primary-orange);
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(232, 93, 4, 0.1);
+}
+
+/* =====================================
+   Animations
+===================================== */
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ember-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(232, 93, 4, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(232, 93, 4, 0.5);
+  }
+}
+
+/* =====================================
+   Scrollbar - Warm theme
+===================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--warm-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--primary-orange), var(--flame-red));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--flame-red);
+}

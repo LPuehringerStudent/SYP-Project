@@ -1,0 +1,136 @@
+@startuml
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) #x#
+
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+title EmberExchange Database Schema
+
+table(Player) {
+    primary_key(playerId): INTEGER
+    username: TEXT
+    coins: INTEGER
+    lootboxCount: INTEGER
+    isAdmin: BOOLEAN
+    joinedAt: TIMESTAMP
+}
+
+table(LootboxType) {
+    primary_key(lootboxTypeId): INTEGER
+    name: TEXT
+    description: TEXT
+    costCoins: INTEGER
+    costFree: BOOLEAN
+    dailyLimit: INTEGER «NULL for unlimited»
+    isAvailable: BOOLEAN
+}
+
+table(Lootbox) {
+    primary_key(lootboxId): INTEGER
+    foreign_key(lootboxTypeId): INTEGER
+    foreign_key(playerId): INTEGER
+    openedAt: TIMESTAMP
+    acquiredHow: TEXT «free|purchase|reward»
+}
+
+table(LootboxDrop) {
+    primary_key(dropId): INTEGER
+    foreign_key(lootboxId): INTEGER
+    foreign_key(stoveId): INTEGER
+}
+
+table(Stove) {
+    primary_key(stoveId): INTEGER
+    foreign_key(typeId): INTEGER
+    foreign_key(currentOwnerId): INTEGER
+    mintedAt: TIMESTAMP
+}
+
+table(StoveType) {
+    primary_key(typeId): INTEGER
+    name: TEXT
+    imageUrl: TEXT
+    rarity: TEXT «common|rare|epic|legendary|limited»
+    lootboxWeight: INTEGER
+}
+
+table(Listing) {
+    primary_key(listingId): INTEGER
+    foreign_key(sellerId): INTEGER
+    foreign_key(stoveId): INTEGER
+    price: INTEGER
+    listedAt: TIMESTAMP
+    status: TEXT «active|cancelled|sold»
+}
+
+table(Trade) {
+    primary_key(tradeId): INTEGER
+    foreign_key(listingId): INTEGER
+    foreign_key(buyerId): INTEGER
+    executedAt: TIMESTAMP
+}
+
+table(MiniGameSession) {
+    primary_key(sessionId): INTEGER
+    foreign_key(playerId): INTEGER
+    gameType: TEXT
+    result: TEXT
+    coinPayout: INTEGER
+    finishedAt: TIMESTAMP
+}
+
+table(PriceHistory) {
+    primary_key(historyId): INTEGER
+    foreign_key(typeId): INTEGER
+    salePrice: INTEGER
+    saleDate: TIMESTAMP
+}
+
+table(Ownership) {
+    primary_key(ownershipId): INTEGER
+    foreign_key(stoveId): INTEGER
+    foreign_key(playerId): INTEGER
+    acquiredAt: TIMESTAMP
+    acquiredHow: TEXT «lootbox|trade|mini-game»
+}
+
+table(ChatMessage) {
+    primary_key(messageId): INTEGER
+    foreign_key(senderId): INTEGER
+    foreign_key(receiverId): INTEGER «NULL for global»
+    content: TEXT
+    sentAt: TIMESTAMP
+    isRead: BOOLEAN
+}
+
+' Relationships
+Player "1" -- "0..*" Lootbox : opens
+Player "1" -- "0..*" Listing : sells
+Player "1" -- "0..*" Trade : buys
+Player "1" -- "0..*" MiniGameSession : plays
+Player "1" -- "0..*" Ownership : has history
+Player "1" -- "0..*" ChatMessage : sends
+Player "1" -- "0..*" ChatMessage : receives
+
+LootboxType "1" -- "0..*" Lootbox : defines
+
+Lootbox "1" -- "1" LootboxDrop : contains
+LootboxDrop "1" -- "1" Stove : drops
+
+Stove "1" -- "0..*" Listing : listed as
+Stove "1" -- "0..1" Trade : sold via
+Stove "1" -- "0..*" Ownership : tracked
+Stove "1" -- "0..*" PriceHistory : has price record
+
+StoveType "1" -- "0..*" Stove : instantiated
+StoveType "1" -- "0..*" PriceHistory : tracked
+
+Listing "1" -- "0..1" Trade : results in
+
+@enduml
