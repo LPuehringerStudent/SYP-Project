@@ -1,6 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
+import {StoveApiService} from '../../services/stove';
 
 @Component({
   selector: 'app-lootbox',
@@ -13,27 +14,20 @@ import {LootBoxHelper, LootItem} from "../../../../middleground/LootboxHelper";
 export class LootboxComponent implements AfterViewInit {
   @ViewChild('itemsContainer') itemsElement!: ElementRef<HTMLElement>;
 
-  private pool: LootItem[] = [
-    { name: 'Common', color: '#b3e5fc', weight: 50 },
-    { name: 'Rare', color: '#81c784', weight: 30 },
-    { name: 'Epic', color: '#ba68c8', weight: 15 },
-    { name: 'Legendary', color: '#ffcc80', weight: 4.999 },
-    { name: 'Secret', color: '#ff8a80', weight: 0.001 },
-  ];
-
   items: LootItem[] = [];
   finalItem: LootItem | null = null;
   showOverlay = false;
   showPopup = false;
   resultText = '';
 
-  private lootBoxHelper: LootBoxHelper;
-
-  constructor(private cdr: ChangeDetectorRef) {
-    this.lootBoxHelper = new LootBoxHelper(cdr);
+  ngAfterViewInit(): void {
   }
 
-  ngAfterViewInit(): void {
+
+  private lootBoxHelper: LootBoxHelper;
+
+  constructor(private cdr: ChangeDetectorRef,private stoveApi: StoveApiService) {
+    this.lootBoxHelper = new LootBoxHelper(cdr);
   }
 
   openBox(): void {
@@ -76,9 +70,14 @@ export class LootboxComponent implements AfterViewInit {
   }
 
   private showResult(): void {
+    this.finalItem = this.lootBoxHelper.finalItem;
+    this.saveLoot(this.lootBoxHelper.returnTypeId(this.finalItem!))
     this.resultText = `You got: ${this.lootBoxHelper.finalItem?.name || 'Unknown'}`;
     this.showPopup = true;
     this.cdr.detectChanges();
+  }
+  saveLoot(typeId: number) {
+    this.stoveApi.createStove(typeId, 1).subscribe();
   }
 
   resetAll(): void {
