@@ -138,6 +138,35 @@
 .empty-state span {
   font-size: 13px;
   color: #888;
+  margin-bottom: 20px;
+}
+
+/* Action button - Go to Lootboxes / Open a Lootbox */
+.action-btn {
+  margin-top: 24px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #e85d04 0%, #f48c06 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(232, 93, 4, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(232, 93, 4, 0.4);
+  background: linear-gradient(135deg, #f48c06 0%, #e85d04 100%);
+}
+
+.action-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(232, 93, 4, 0.3);
 }
 
 /* =========================
