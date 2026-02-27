@@ -32,8 +32,15 @@ export async function getAllListings(): Promise<Listing[]> {
   const response = await fetch(`${API_BASE_URL}/listings`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch listings: ${response.status}`);
+    let errorMessage = `Failed to fetch listings: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing[];
@@ -46,8 +53,15 @@ export async function getActiveListings(): Promise<Listing[]> {
   const response = await fetch(`${API_BASE_URL}/listings/active`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch active listings: ${response.status}`);
+    let errorMessage = `Failed to fetch active listings: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing[];
@@ -60,8 +74,15 @@ export async function getListingById(id: number): Promise<Listing> {
   const response = await fetch(`${API_BASE_URL}/listings/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch listing ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch listing ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing;
@@ -74,8 +95,15 @@ export async function getListingsBySellerId(sellerId: number): Promise<Listing[]
   const response = await fetch(`${API_BASE_URL}/players/${sellerId}/listings`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch listings for seller ${sellerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch listings for seller ${sellerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing[];
@@ -88,8 +116,15 @@ export async function getActiveListingsBySellerId(sellerId: number): Promise<Lis
   const response = await fetch(`${API_BASE_URL}/players/${sellerId}/listings/active`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch active listings for seller ${sellerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch active listings for seller ${sellerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing[];
@@ -102,8 +137,15 @@ export async function getActiveListingByStoveId(stoveId: number): Promise<Listin
   const response = await fetch(`${API_BASE_URL}/stoves/${stoveId}/listing`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch listing for stove ${stoveId}: ${response.status}`);
+    let errorMessage = `Failed to fetch listing for stove ${stoveId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Listing;
@@ -126,8 +168,15 @@ export async function createListing(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create listing: ${response.status}`);
+    let errorMessage = `Failed to create listing: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateListingResponse;
@@ -146,8 +195,15 @@ export async function updateListingPrice(id: number, price: number): Promise<Suc
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to update listing price: ${response.status}`);
+    let errorMessage = `Failed to update listing price: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -162,8 +218,15 @@ export async function cancelListing(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to cancel listing: ${response.status}`);
+    let errorMessage = `Failed to cancel listing: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -178,8 +241,15 @@ export async function deleteListing(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete listing: ${response.status}`);
+    let errorMessage = `Failed to delete listing: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -192,8 +262,15 @@ export async function countActiveListingsBySeller(sellerId: number): Promise<Cou
   const response = await fetch(`${API_BASE_URL}/players/${sellerId}/active-listings/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count active listings for seller ${sellerId}: ${response.status}`);
+    let errorMessage = `Failed to count active listings for seller ${sellerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;

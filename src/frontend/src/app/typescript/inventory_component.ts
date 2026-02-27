@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {NgForOf, NgIf} from '@angular/common';
 import { StoveApiService } from '../../services/stove';
-import { Subscription } from 'rxjs';
+import {forkJoin, map, of, Subscription, switchMap} from 'rxjs';
+import {Rarity, ShowedStove, StoveRow} from '../../../../shared/model';
 
 interface InventoryLootbox {
   count: number;
@@ -26,7 +27,7 @@ export class InventoryComponent implements OnInit {
 
   // Empty arrays to show empty state
   lootboxes: any[] = [];
-  items: any[] = [];
+  items: ShowedStove[] = [];
   private _stove: StoveApiService;
   private _subscription = new Subscription();
 
@@ -39,26 +40,54 @@ export class InventoryComponent implements OnInit {
     this.getItems();
 
     // Auto-refresh when service notifies
-    this._stove.refresh$.subscribe(() => {
-      console.log('Refresh triggered');
+    const refreshSub = this._stove.refresh$.subscribe(() => {
       this.getItems();
     });
+    this._subscription.add(refreshSub);
   }
 
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
   getItems(): void {
-    const stoves$ = this._stove.getStoves(1);
+    const sub = this._stove.getStoves(1).pipe(
+      switchMap((stoves: StoveRow[]) => {
+        if (stoves.length === 0) return of([]);
 
-    const sub = stoves$.subscribe({
-      next: (data) => {
-        this.items = data;
+        return forkJoin(
+          stoves.map((stove, index) =>
+            this._stove.checkRarity(stove.typeId).pipe(
+              map(rarity => ({
+                ...stove,
+                stoveId: stove.stoveId,
+                rarity,
+                stoveName: this.getStoveName(stove.typeId)
+              }))
+            )
+          )
+        );
+      })
+    ).subscribe({
+      next: (showedStoves: ShowedStove[]) => {
+        this.items = showedStoves;
       },
       error: (err) => {
         console.error('Failed to get stoves:', err);
         this.items = [];
       }
     });
-
     this._subscription.add(sub);
+  }
+
+
+  private getStoveName(typeId: number): string {
+    const nameMap: Record<number, string> = {
+      1: 'Basic Stove',
+      2: 'Iron Stove',
+      3: 'Steel Stove',
+      // ... add your stove names
+    };
+    return nameMap[typeId] || `Stove #${typeId}`;
   }
 
   toggleMenu(box: InventoryLootbox) {

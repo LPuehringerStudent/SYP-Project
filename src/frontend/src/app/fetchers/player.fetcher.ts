@@ -27,8 +27,15 @@ export async function getAllPlayers(): Promise<Player[]> {
   const response = await fetch(`${API_BASE_URL}/players`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch players: ${response.status}`);
+    let errorMessage = `Failed to fetch players: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Player[];
@@ -41,8 +48,15 @@ export async function getPlayerById(id: number): Promise<Player> {
   const response = await fetch(`${API_BASE_URL}/players/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch player ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch player ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Player;
@@ -53,11 +67,15 @@ export async function getPlayerById(id: number): Promise<Player> {
  */
 export async function createPlayer(
   username: string,
+  password?: string,
+  email?: string,
   coins?: number,
   lootboxCount?: number
 ): Promise<CreatePlayerResponse> {
-  const body: { username: string; coins?: number; lootboxCount?: number } = { username };
+  const body: { username: string; password?: string; email?: string; coins?: number; lootboxCount?: number } = { username };
 
+  if (password !== undefined) body.password = password;
+  if (email !== undefined) body.email = email;
   if (coins !== undefined) body.coins = coins;
   if (lootboxCount !== undefined) body.lootboxCount = lootboxCount;
 
@@ -70,8 +88,15 @@ export async function createPlayer(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create player: ${response.status}`);
+    let errorMessage = `Failed to create player: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreatePlayerResponse;
@@ -90,8 +115,15 @@ export async function updatePlayerCoins(id: number, coins: number): Promise<Succ
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to update coins: ${response.status}`);
+    let errorMessage = `Failed to update coins: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -110,8 +142,15 @@ export async function updatePlayerLootboxCount(id: number, lootboxCount: number)
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to update lootbox count: ${response.status}`);
+    let errorMessage = `Failed to update lootbox count: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -126,8 +165,15 @@ export async function deletePlayer(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete player: ${response.status}`);
+    let errorMessage = `Failed to delete player: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;

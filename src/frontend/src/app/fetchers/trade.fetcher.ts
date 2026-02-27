@@ -32,8 +32,15 @@ export async function getAllTrades(): Promise<Trade[]> {
   const response = await fetch(`${API_BASE_URL}/trades`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch trades: ${response.status}`);
+    let errorMessage = `Failed to fetch trades: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Trade[];
@@ -46,8 +53,15 @@ export async function getTradeById(id: number): Promise<Trade> {
   const response = await fetch(`${API_BASE_URL}/trades/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch trade ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch trade ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Trade;
@@ -60,8 +74,15 @@ export async function getTradeByListingId(listingId: number): Promise<Trade> {
   const response = await fetch(`${API_BASE_URL}/listings/${listingId}/trade`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch trade for listing ${listingId}: ${response.status}`);
+    let errorMessage = `Failed to fetch trade for listing ${listingId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Trade;
@@ -74,8 +95,15 @@ export async function getTradesByBuyerId(buyerId: number): Promise<Trade[]> {
   const response = await fetch(`${API_BASE_URL}/players/${buyerId}/trades`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch trades for buyer ${buyerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch trades for buyer ${buyerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Trade[];
@@ -97,8 +125,15 @@ export async function executeTrade(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to execute trade: ${response.status}`);
+    let errorMessage = `Failed to execute trade: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as ExecuteTradeResponse;
@@ -115,8 +150,15 @@ export async function getRecentTrades(limit?: number): Promise<Trade[]> {
   const response = await fetch(url);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch recent trades: ${response.status}`);
+    let errorMessage = `Failed to fetch recent trades: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+  }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Trade[];
@@ -131,8 +173,15 @@ export async function deleteTrade(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete trade: ${response.status}`);
+    let errorMessage = `Failed to delete trade: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -145,8 +194,15 @@ export async function countTrades(): Promise<CountResponse> {
   const response = await fetch(`${API_BASE_URL}/trades/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count trades: ${response.status}`);
+    let errorMessage = `Failed to count trades: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;
@@ -159,8 +215,15 @@ export async function countTradesByBuyer(buyerId: number): Promise<CountResponse
   const response = await fetch(`${API_BASE_URL}/players/${buyerId}/trades/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count trades for buyer ${buyerId}: ${response.status}`);
+    let errorMessage = `Failed to count trades for buyer ${buyerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;

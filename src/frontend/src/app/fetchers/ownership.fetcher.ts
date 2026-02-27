@@ -32,8 +32,15 @@ export async function getAllOwnerships(): Promise<Ownership[]> {
   const response = await fetch(`${API_BASE_URL}/ownerships`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch ownerships: ${response.status}`);
+    let errorMessage = `Failed to fetch ownerships: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Ownership[];
@@ -46,8 +53,15 @@ export async function getOwnershipById(id: number): Promise<Ownership> {
   const response = await fetch(`${API_BASE_URL}/ownerships/${id}`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch ownership ${id}: ${response.status}`);
+    let errorMessage = `Failed to fetch ownership ${id}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Ownership;
@@ -60,8 +74,15 @@ export async function getOwnershipHistoryByStoveId(stoveId: number): Promise<Own
   const response = await fetch(`${API_BASE_URL}/stoves/${stoveId}/ownership-history`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch ownership history for stove ${stoveId}: ${response.status}`);
+    let errorMessage = `Failed to fetch ownership history for stove ${stoveId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Ownership[];
@@ -74,8 +95,15 @@ export async function getOwnershipsByPlayerId(playerId: number): Promise<Ownersh
   const response = await fetch(`${API_BASE_URL}/players/${playerId}/ownerships`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch ownerships for player ${playerId}: ${response.status}`);
+    let errorMessage = `Failed to fetch ownerships for player ${playerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Ownership[];
@@ -98,8 +126,15 @@ export async function createOwnership(
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to create ownership record: ${response.status}`);
+    let errorMessage = `Failed to create ownership record: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CreateOwnershipResponse;
@@ -112,8 +147,15 @@ export async function getCurrentOwner(stoveId: number): Promise<Ownership> {
   const response = await fetch(`${API_BASE_URL}/stoves/${stoveId}/current-owner`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to fetch current owner for stove ${stoveId}: ${response.status}`);
+    let errorMessage = `Failed to fetch current owner for stove ${stoveId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as Ownership;
@@ -128,8 +170,15 @@ export async function deleteOwnership(id: number): Promise<SuccessMessage> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to delete ownership record: ${response.status}`);
+    let errorMessage = `Failed to delete ownership record: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as SuccessMessage;
@@ -142,8 +191,15 @@ export async function countOwnershipChanges(stoveId: number): Promise<CountRespo
   const response = await fetch(`${API_BASE_URL}/stoves/${stoveId}/ownership-changes/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count ownership changes for stove ${stoveId}: ${response.status}`);
+    let errorMessage = `Failed to count ownership changes for stove ${stoveId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;
@@ -156,8 +212,15 @@ export async function countStovesAcquiredByPlayer(playerId: number): Promise<Cou
   const response = await fetch(`${API_BASE_URL}/players/${playerId}/acquired-stoves/count`);
 
   if (!response.ok) {
-    const errorData = await response.json() as ApiError;
-    throw new Error(errorData.error || `Failed to count acquired stoves for player ${playerId}: ${response.status}`);
+    let errorMessage = `Failed to count acquired stoves for player ${playerId}: ${response.status}`;
+    try {
+      const errorData = await response.json() as ApiError;
+      errorMessage = errorData.error || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   return await response.json() as CountResponse;
