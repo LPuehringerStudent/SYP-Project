@@ -2,9 +2,9 @@
   <!-- User Welcome Section -->
   <section class="user-welcome">
     <div class="welcome-header">
-      <h1>Hello, <span class="username">PlayerOne</span> 👋</h1>
+      <h1>Hello, <span class="username">PlayerOne</span></h1>
       <button class="inventory-btn" routerLink="/inventory">
-        <span class="btn-icon">🎒</span>
+        <span class="btn-icon"></span>
         View Inventory
       </button>
     </div>
@@ -33,7 +33,7 @@
         <div class="game-card" *ngFor="let game of games">
           <div class="game-icon">{{game.icon}}</div>
           <h3>{{game.name}}</h3>
-          <p class="game-reward">+{{game.reward}} Coal/win</p>
+          <!-- <p class="game-reward">+{{game.reward}} Coal/win</p> -->
         </div>
       </div>
       <button class="carousel-arrow right" (click)="scrollGames('right')">›</button>
@@ -48,25 +48,25 @@
         <!-- Removed 'featured' class and card-badge div -->
         <div class="card" routerLink="/lootboxes">
           <h1>Lootboxes</h1>
-          <p>Open limited edition lootboxes to collect unique stoves. Global opening limit applies!</p>
+          <p>Open Lootboxes to get stoves which can be later looked at in the inventory.</p>
           <div class="card-footer">
-            <span class="availability">0 / 10,000 opened</span>
+            <!--<span class="availability">0 / 10,000 opened</span>-->
           </div>
         </div>
 
         <div class="card" routerLink="/games">
           <h1>Games</h1>
-          <p>Play mini-games to earn coal currency. Compete on leaderboards and unlock achievements.</p>
+          <p>PLay mini games to earn coal.</p>
           <div class="card-footer">
-            <span class="play-count">0 games played</span>
+            <!-- <span class="play-count">0 games played</span>-->
           </div>
         </div>
 
         <div class="card" routerLink="/marketplace">
           <h1>Marketplace</h1>
-          <p>Buy, sell, and trade stove cosmetics with other players. Set your own prices!</p>
+          <p>Trading and selling stoves or Lootboxes on the marketplace.</p>
           <div class="card-footer">
-            <span class="listing-count">0 active listings</span>
+            <!--<span class="listing-count">0 active listings</span>-->
           </div>
         </div>
       </div>
